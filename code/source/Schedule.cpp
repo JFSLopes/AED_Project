@@ -38,3 +38,21 @@ void Schedule::print(){
     cout << "Friday\n";
     for(Subject& x : fri) x.show();
 }
+
+void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s){
+    for(Subject& subject : mon){
+        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Monday"));
+    }
+    for(Subject& subject : tue){
+        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Tuesday"));
+    }
+    for(Subject& subject : wed){
+        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Wednesday"));
+    }
+    for(Subject& subject : thu){
+        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Thursday"));
+    }
+    for(Subject& subject : fri){
+        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Friday"));
+    }
+}

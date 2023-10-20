@@ -3,8 +3,10 @@
 
 #include <string>
 #include <vector>
-#include "../header/Uc.h"
-#include "../header/Class.h"
+#include <set>
+#include "Uc.h"
+#include "Class.h"
+#include "Student.h"
 
 class App{
 private:
@@ -14,10 +16,13 @@ private:
     std::vector<Class> vClass1;
     std::vector<Class> vClass2;
     std::vector<Class> vClass3;
+    std::set<Student> students;
+
 public:
     App(std::string file1, std::string file2, std::string file3);
     void read_classes_per_uc();
     void read_classes();
+    void read_students();
 };
 
 #endif //AED_PROJECT_APP_H

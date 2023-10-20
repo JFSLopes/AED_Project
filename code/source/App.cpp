@@ -36,7 +36,7 @@ void App::read_classes_per_uc(){
             if((int) vUp.size() < temp) vUp.push_back(Uc());
         }
 
-        int temp = temp = stoi(str2.substr(5,2));
+        int temp = stoi(str2.substr(5,2));
         // adds to the vector depending on the class year
         switch(str2[0]){
             case '1':
@@ -99,7 +99,8 @@ void App::read_classes(){
         }
         char year = classCode[0];
         pos = stoi(classCode.substr(5,2));
-        Subject newSubject(uc, type, stof(start), stof(duration));
+        short UcNumber = uc[0] == 'L' ? stoi(uc.substr(5,3)) : stoi(uc.substr(2,3));
+        Subject newSubject(UcNumber, type, stof(start), stof(duration));
         switch (year){
             case '1':
                 vClass1[pos-1].completeSchedule(newSubject, weekDay);
@@ -113,3 +114,75 @@ void App::read_classes(){
         }
     }
 }
+void App::read_students(){
+    ifstream in(file3);
+    if(in.is_open()) cout << "Funcionou 3\n";
+    string line;
+    getline(in, line);
+    int count = 1;
+    bool firstIteration = true;
+    int prevUP = 0;
+    string prevName;
+    list<pair<int,short>> class_uc;
+    while(true){
+        if(getline(in, line).eof()){
+            Student student(prevUP, prevName);
+            student.setclass_Uc(class_uc);
+            students.insert(student);
+            break;
+        }
+        count++;
+        int pos = 0;
+        string UPnumber, name, ucCode, classCode;
+        while (line[pos] != ',') {
+            UPnumber += line[pos];
+            pos++;
+        }
+        pos++;
+        while (line[pos] != ',') {
+            name += line[pos];
+            pos++;
+        }
+        pos++;
+        while (line[pos] != ',') {
+            ucCode += line[pos];
+            pos++;
+        }
+        pos++;
+        while (pos < (int)line.size() - 1) {
+            classCode += line[pos];
+            pos++;
+        }
+        int up = stoi(UPnumber);
+        if(firstIteration){
+            prevUP = up;
+            firstIteration = false;
+        }
+        if(prevUP != up){
+            Student student(prevUP, prevName);
+            student.setclass_Uc(class_uc);
+            class_uc.clear();
+            students.insert(student);
+            prevUP = up;
+            prevName = name;
+        }
+        int classNumber = (classCode[0] - '0') * 100 + stoi(classCode.substr(5,2));
+        short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3));
+        class_uc.push_back(make_pair(classNumber, UcNumber));
+    }
+
+    Schedule schedule;
+    stack<pair<Subject,string>> temp;
+    list<pair<int,short>> aux = students.begin()->getList();
+    for(auto x : aux){
+        vClass1[x.first-101].getUcScheduleFromSchedule(x.second, temp);
+    }
+    cout << "a\n";
+    while(!temp.empty()){
+        auto top = temp.top();
+        schedule.addSubject(top.first, top.second);
+        temp.pop();
+    }
+    schedule.print();
+}
+

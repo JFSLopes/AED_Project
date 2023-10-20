@@ -5,11 +5,13 @@
 
 class Uc{
 private:
-    int numStudents;
     Schedule schedule;
+    std::set<int> students;
+    /*
 public:
     Uc();
     void addStudents(int num);
+     */
 };
 
 #endif //AED_PROJECT_UC_H

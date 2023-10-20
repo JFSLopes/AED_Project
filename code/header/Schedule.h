@@ -3,6 +3,7 @@
 
 #include "Subject.h"
 #include <vector>
+#include <set>
 #include <map>
 
 class Schedule{
@@ -21,6 +22,7 @@ public:
     Schedule();
     void addSubject(Subject& subject, std::string day);
     void print();
+    void getUcSchedule(short value, std::stack<std::pair<Subject, std::string>>& s);
 };
 
 #endif //AED_PROJECT_SCHEDULE_H

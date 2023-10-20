@@ -2,16 +2,19 @@
 #define AED_PROJECT_SUBJECT_H
 
 #include <string>
+#include <stack>
 #include <iostream>
 
 class Subject{
 private:
-    std::string name, type;
+    short UcNumber;
+    std::string type;
     float startHour, duration;
     short uc;
 public:
-    Subject(std::string& name,std::string& type, float start, float duration);
+    Subject(short UcNumber, std::string& type, float start, float duration);
     void show();
+    short getUcNumber();
 };
 
 #endif //AED_PROJECT_SUBJECT_H
