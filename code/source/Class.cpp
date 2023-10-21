@@ -7,6 +7,7 @@ void Class::completeSchedule(Subject &subject, std::string day){
 }
 
 void Class::show(){
+    schedule.sortSchedule();
     schedule.print();
 }
 

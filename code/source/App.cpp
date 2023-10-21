@@ -170,10 +170,8 @@ void App::read_students(){
         short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3));
         class_uc.push_back(make_pair(classNumber, UcNumber));
     }
-    showStudentSchedule(202035262);
+    showStudentSchedule(202030247);
     cout << '\n';
-    vClass1[4].show();
-    cout << "Fim\n";
 
 }
 
@@ -183,8 +181,7 @@ void App::showStudentSchedule(int upNumber){
         invalidUpNumber(upNumber);
         return;
     }
-    Student temp = *itr;
-    temp.showSchedule(vClass1, vClass2, vClass3);
+    itr->showSchedule(vClass1, vClass2, vClass3);
 }
 
 void App::invalidUpNumber(int up) {
