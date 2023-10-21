@@ -19,10 +19,14 @@ private:
     std::set<Student> students;
 
 public:
+
+    static void invalidUpNumber(int up);
+
     App(std::string file1, std::string file2, std::string file3);
     void read_classes_per_uc();
     void read_classes();
     void read_students();
+    void showStudentSchedule(int upNumber);
 };
 
 #endif //AED_PROJECT_APP_H

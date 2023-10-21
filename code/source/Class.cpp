@@ -10,6 +10,6 @@ void Class::show(){
     schedule.print();
 }
 
-void Class::getUcScheduleFromSchedule(short id, stack<pair<Subject,string>>& s){
+void Class::getUcScheduleFromSchedule(short id, stack<pair<Subject,string>>& s) const{
     schedule.getUcSchedule(id, s);
 }

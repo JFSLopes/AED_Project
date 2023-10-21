@@ -2,7 +2,6 @@
 #define AED_PROJECT_CLASS_H
 
 #include "Schedule.h"
-#include "Student.h"
 
 class Class{
 private:
@@ -11,7 +10,7 @@ private:
 public:
     void completeSchedule(Subject& subject, std::string day);
     // retorna o hórario desta uc nesta turma
-    void getUcScheduleFromSchedule(short id, std::stack<std::pair<Subject,std::string>>& s);
+    void getUcScheduleFromSchedule(short id, std::stack<std::pair<Subject,std::string>>& s) const;
     void show();
 };
 

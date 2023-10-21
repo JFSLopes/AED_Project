@@ -1,7 +1,6 @@
 #include "../header/Schedule.h"
 
 using namespace std;
-Schedule::Schedule() {}
 
 /*
  * Adds a subject to the corresponding vector, according to the day of the week
@@ -26,33 +25,37 @@ void Schedule::addSubject(Subject &subject, string day){
     }
 }
 
-void Schedule::print(){
+void Schedule::print() const{
     cout << "Monday\n";
-    for(Subject& x : mon) x.show();
+    for(const Subject& x : mon) x.show();
     cout << "Tuesday\n";
-    for(Subject& x : tue) x.show();
+    for(const Subject& x : tue) x.show();
     cout << "Wednesday\n";
-    for(Subject& x : wed) x.show();
+    for(const Subject& x : wed) x.show();
     cout << "Thursday\n";
-    for(Subject& x : thu) x.show();
+    for(const Subject& x : thu) x.show();
     cout << "Friday\n";
-    for(Subject& x : fri) x.show();
+    for(const Subject& x : fri) x.show();
 }
 
-void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s){
-    for(Subject& subject : mon){
+void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s) const{
+    for(const Subject& subject : mon){
         if(subject.getUcNumber() == value) s.push(make_pair(subject, "Monday"));
     }
-    for(Subject& subject : tue){
+    for(const Subject& subject : tue){
         if(subject.getUcNumber() == value) s.push(make_pair(subject, "Tuesday"));
     }
-    for(Subject& subject : wed){
+    for(const Subject& subject : wed){
         if(subject.getUcNumber() == value) s.push(make_pair(subject, "Wednesday"));
     }
-    for(Subject& subject : thu){
+    for(const Subject& subject : thu){
         if(subject.getUcNumber() == value) s.push(make_pair(subject, "Thursday"));
     }
-    for(Subject& subject : fri){
+    for(const Subject& subject : fri){
         if(subject.getUcNumber() == value) s.push(make_pair(subject, "Friday"));
     }
+}
+
+void Schedule::sortSchedule(){
+    mon.sort(); tue.sort(); wed.sort(); thu.sort(); fri.sort();
 }

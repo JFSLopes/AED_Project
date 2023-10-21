@@ -170,19 +170,24 @@ void App::read_students(){
         short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3));
         class_uc.push_back(make_pair(classNumber, UcNumber));
     }
+    showStudentSchedule(202035262);
+    cout << '\n';
+    vClass1[4].show();
+    cout << "Fim\n";
 
-    Schedule schedule;
-    stack<pair<Subject,string>> temp;
-    list<pair<int,short>> aux = students.begin()->getList();
-    for(auto x : aux){
-        vClass1[x.first-101].getUcScheduleFromSchedule(x.second, temp);
+}
+
+void App::showStudentSchedule(int upNumber){
+    set<Student>::iterator itr = students.find(Student(upNumber));
+    if(itr == students.end()){
+        invalidUpNumber(upNumber);
+        return;
     }
-    cout << "a\n";
-    while(!temp.empty()){
-        auto top = temp.top();
-        schedule.addSubject(top.first, top.second);
-        temp.pop();
-    }
-    schedule.print();
+    Student temp = *itr;
+    temp.showSchedule(vClass1, vClass2, vClass3);
+}
+
+void App::invalidUpNumber(int up) {
+    cout << "O número up introduzido, " << up << ", não existe na base de dados.\nIntrouza um up válido.";
 }
 
