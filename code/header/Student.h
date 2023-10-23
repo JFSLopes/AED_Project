@@ -3,6 +3,7 @@
 
 #include "Schedule.h"
 #include "Class.h"
+#include "Uc.h"
 #include <string>
 #include <list>
 

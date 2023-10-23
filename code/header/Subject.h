@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stack>
+#include <iomanip>
 #include <iostream>
 
 class Subject{
@@ -10,7 +11,6 @@ private:
     short UcNumber;
     std::string type;
     float startHour, duration;
-    short uc;
 public:
     Subject(short UcNumber, std::string& type, float start, float duration);
     void show() const;

@@ -29,11 +29,11 @@ void App::read_classes_per_uc(){
         }
         if(str1[0] == 'L'){
             int temp = stoi(str1.substr(5,3));
-            if((int) vUc.size() < temp) vUc.push_back(Uc());
+            if((int) vUc.size() < temp) vUc.push_back(Uc(temp));
         }
         else{
             int temp = stoi(str1.substr(2,3));
-            if((int) vUp.size() < temp) vUp.push_back(Uc());
+            if((int) vUp.size() < temp) vUp.push_back(Uc(temp + 100));
         }
 
         int temp = stoi(str2.substr(5,2));
@@ -65,6 +65,7 @@ void App::read_classes(){
     if(in.is_open()) cout << "Funcionou 2\n";
     string line;
     getline(in, line);
+    int count = 2;
     while(getline(in, line)){
         int pos = 0;
         string classCode, uc, weekDay, start, duration, type;
@@ -99,8 +100,11 @@ void App::read_classes(){
         }
         char year = classCode[0];
         pos = stoi(classCode.substr(5,2));
-        short UcNumber = uc[0] == 'L' ? stoi(uc.substr(5,3)) : stoi(uc.substr(2,3));
+        // Caso seja UPxxx, é somando 100 para diferenciar da L.EIC001
+        short UcNumber = uc[0] == 'L' ? stoi(uc.substr(5,3)) : stoi(uc.substr(2,3)) + 100;
+        int classNumber = (classCode[0] - '0') * 100 + stoi(classCode.substr(5,2));
         Subject newSubject(UcNumber, type, stof(start), stof(duration));
+        // Adicionar a disciplina ao horário da turma a que pertence
         switch (year){
             case '1':
                 vClass1[pos-1].completeSchedule(newSubject, weekDay);
@@ -112,6 +116,13 @@ void App::read_classes(){
                 vClass3[pos-1].completeSchedule(newSubject, weekDay);
                 break;
         }
+        cout << count << ": " << uc << " " << type << '\n';
+        count++;
+        // Guardar as turmas que têm a Uc, para depois ser possível calcular o horário da Uc
+        // A condição indica se é UP ou L.EIC
+        if(UcNumber / 100 == 0) vUc[UcNumber - 1].addClass(classNumber);
+        else vUp[UcNumber%100 - 1].addClass(classNumber);
+
     }
 }
 void App::read_students(){
@@ -123,6 +134,7 @@ void App::read_students(){
     bool firstIteration = true;
     int prevUP = 0;
     string prevName;
+    // guarda a relação entre turma-uc para cada aluno
     list<pair<int,short>> class_uc;
     while(true){
         if(getline(in, line).eof()){
@@ -167,12 +179,16 @@ void App::read_students(){
             prevName = name;
         }
         int classNumber = (classCode[0] - '0') * 100 + stoi(classCode.substr(5,2));
-        short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3));
+        // As UC's UP vão ser guardadas somando 100 para diferenciar da L.EIC001;
+        short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3))  + 100;
         class_uc.push_back(make_pair(classNumber, UcNumber));
     }
     showStudentSchedule(202030247);
     cout << '\n';
-
+    cout << '\n';
+    vUp[0].showSchedule(vClass1, vClass2, vClass3);
+    cout << '\n';
+    vUc[12].showSchedule(vClass1, vClass2, vClass3);
 }
 
 void App::showStudentSchedule(int upNumber){

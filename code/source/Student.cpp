@@ -31,6 +31,10 @@ Schedule Student::calculateSchedule(const std::vector<Class>& c1,
     Schedule schedule;
     stack<pair<Subject,string>> temp;
     for(const pair<int, short>& x : class_Uc){
+        // caso seja verdade a Uc é uma UPxxx;
+        if(x.second / 100 == 1){
+
+        }
         int year = x.first / 100;
         int classNumber = x.first % 100;
         switch(year){
