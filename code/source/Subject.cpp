@@ -5,10 +5,10 @@ Subject::Subject(short UcNumber, string& type, float start, float duration)
                 : UcNumber(UcNumber), type(type), startHour(start), duration(duration) {}
 
 void Subject::show() const{
-    cout << startHour << " | ";
+    cout << startHour << setw(3) << setfill(' ') << " | ";
     // formata de acordo com o tipo de Uc
     cout << (UcNumber > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << (UcNumber % 100);
-    cout << " (" << type << ") " << "| " << startHour + duration << '\n';
+    cout << " (" << type << ") " << setw(3) << setfill(' ') <<  "| " << startHour + duration << '\n';
 }
 
 short Subject::getUcNumber() const{

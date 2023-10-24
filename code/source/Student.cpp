@@ -21,13 +21,15 @@ void Student::setclass_Uc(std::list<std::pair<int, short>> &l){
     class_Uc = l;
 }
 
+void Student::setEnrolledYears(const std::string &s){
+    enrolledYears = s;
+}
+
 list<pair<int, short>> Student::getList() const{
     return class_Uc;
 }
 
-Schedule Student::calculateSchedule(const std::vector<Class>& c1,
-                                    const std::vector<Class>& c2,
-                                    const std::vector<Class>& c3) const{
+Schedule Student::calculateSchedule(const std::vector<Class>& c1, const std::vector<Class>& c2, const std::vector<Class>& c3) const{
     Schedule schedule;
     stack<pair<Subject,string>> temp;
     for(const pair<int, short>& x : class_Uc){
@@ -56,11 +58,21 @@ Schedule Student::calculateSchedule(const std::vector<Class>& c1,
     return schedule;
 }
 
-void Student::showSchedule(const std::vector<Class>& c1,
-                           const std::vector<Class>& c2,
-                           const std::vector<Class>& c3) const{
+void Student::showSchedule(const std::vector<Class>& c1, const std::vector<Class>& c2, const std::vector<Class>& c3) const{
     cout << "Aluno: " << name << '\n' << "Número up: " << UPnumber << '\n';
     Schedule schedule = calculateSchedule(c1, c2, c3);
     schedule.sortSchedule();
     schedule.print();
+}
+
+void Student::showStudentData() const{
+    cout << name << " ----> " << UPnumber << '\n';
+}
+
+bool Student::belongToYear(char year) const{
+    return (enrolledYears.find(year) != string::npos);
+}
+
+string Student::getName() const{
+    return name;
 }

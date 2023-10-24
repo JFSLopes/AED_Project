@@ -1,13 +1,11 @@
-#include <iostream>
 #include "code/header/App.h"
 
 using namespace std;
-#define PATH /Users/joselopes/Desktop/AED_Project/schedule
+
 int main() {
-    string path = "/Users/joselopes/Desktop/AED_Project/schedule/";
-    App app(path + "classes_per_uc.csv", path + "classes.csv", path + "students_classes.csv");
-    app.read_classes_per_uc();
-    app.read_classes();
-    app.read_students();
+    App app;
+    app.read_classes_per_uc("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    app.read_classes("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
+    app.read_students("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
     return 0;
 }

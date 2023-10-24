@@ -9,14 +9,12 @@
 
 class Student{
 private:
-    short withinYears;
+    std::string enrolledYears;
     int UPnumber;
     std::string name;
     std::list<std::pair<int,short>> class_Uc;
 
-    Schedule calculateSchedule(const std::vector<Class> &c1,
-                               const std::vector<Class> &c2,
-                               const std::vector<Class> &c3) const;
+    Schedule calculateSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
 
 public:
     Student(int number);
@@ -24,14 +22,16 @@ public:
     bool operator<(const Student& student);
 
     int getUpNumber() const;
+    std::string getName() const;
     short getNumberOfUC() const;
     std::list<std::pair<int,short>> getList() const;
 
     void setclass_Uc(std::list<std::pair<int,short>>& l);
+    void setEnrolledYears(const std::string& s);
 
-    void showSchedule(const std::vector<Class> &c1,
-                      const std::vector<Class> &c2,
-                      const std::vector<Class> &c3) const;
+    void showStudentData() const;
+    void showSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
+    bool belongToYear(char year) const;
 
 
 };
