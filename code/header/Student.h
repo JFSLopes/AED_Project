@@ -22,8 +22,8 @@ public:
     bool operator<(const Student& student);
 
     int getUpNumber() const;
+    int getNumberOfUc() const;
     std::string getName() const;
-    short getNumberOfUC() const;
     std::list<std::pair<int,short>> getList() const;
 
     void setclass_Uc(std::list<std::pair<int,short>>& l);

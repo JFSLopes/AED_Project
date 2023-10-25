@@ -32,3 +32,5 @@
 *.app
 
 *.log
+
+cmake-build-debug/

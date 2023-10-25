@@ -13,6 +13,10 @@ int Student::getUpNumber() const {
     return UPnumber;
 }
 
+int Student::getNumberOfUc() const{
+    return (int) class_Uc.size();
+}
+
 bool operator<(const Student& student1, const Student& student2){
     return student1.getUpNumber() < student2.getUpNumber();
 }

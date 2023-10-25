@@ -2,9 +2,7 @@
 #include <fstream>
 #include <iostream>
 using namespace std;
-/*
- * Reads and stores the classes and uc's
- */
+
 void App::read_classes_per_uc(const string& fileName){
     ifstream in(fileName);
     if(in.is_open()) cout << "Funcionou\n";
@@ -206,6 +204,7 @@ void App::read_students(const string& fileName){
         short UcNumber = ucCode[0] == 'L' ? (short) stoi(ucCode.substr(5,3)) : (short) stoi(ucCode.substr(2,3))  + 100;
         class_uc.push_back(make_pair(classNumber, UcNumber));
     }
+    showStudentsIn_n_uc(7);
     /*
     showStudentSchedule(202030247);
     cout << '\n';
@@ -317,5 +316,16 @@ void App::showStudentsPerUc(char type, short number) const{
     }
     sortByName(orderedByName);
     for(const Student& x : orderedByName) x.showStudentData();
+}
+
+void App::showStudentsIn_n_uc(int numberOfUc) const{
+    vector<Student> orderedByName;
+    for (const Student& x : students){
+        orderedByName.push_back(x);
+    }
+    sortByName(orderedByName);
+    for(const Student& x : orderedByName){
+        if(x.getNumberOfUc() >= numberOfUc) x.showStudentData();
+    }
 }
 

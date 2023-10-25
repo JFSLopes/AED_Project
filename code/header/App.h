@@ -32,13 +32,8 @@ private:
      * @brief stores all the classes from the second year
      */
     std::vector<Class> vClass2; ///< stores all the classes from the second year
-    /**
-     * @brief stores all the classes from the third year
-     */
+
     std::vector<Class> vClass3; ///< stores all the classes from the third year
-    /**
-     * @brief stores all students
-     */
     std::set<Student> students; ///< stores all students
 
     void sortByName(std::vector<Student>& v) const;
@@ -52,8 +47,8 @@ public:
     /**
      * @brief treats the information related to classes and uc
      *
-     * This method reads the uc and classes from the file and fills the vector that are going to contain those
-     * objects. Those object, at first, do not have any information.
+     * This method reads line by line the uc and classes from the file and fills the vector that are going to contain those
+     * objects. The vectors used are vClass1, vClass2, vClass3 for classes and vUp, vUc for the UC.
      * Because classes are yLEICxxx, the method uses 'y' to decide in which vector (vClass1, vClass2, vClass3)
      * is going to store that class and the 'xxx' indicate the position on the vector.
      * Uc are either UPxxx or L.EICxxx so they are store in vUp and vUc respectively. 'xxx' indicates the position.
@@ -61,7 +56,25 @@ public:
      * @param fileName Name of the file where the information is in
      */
     void read_classes_per_uc(const std::string& fileName);
+    /**
+     * @brief treats the information related to the schedule of UC
+     *
+     * This method reads line by line the start and end hour of an UC, the weekday of and the corresponding class.
+     * It uses this information to create the schedules for each class and completes the classes on the classes'
+     * vectors.
+     *
+     * @param fileName Name of the file where the information is in
+     */
     void read_classes(const std::string& fileName);
+    /**
+     * @brief treats the information related to the schedule of UC
+     *
+     * This method reads line by line the start and end hour of an UC, the weekday of and the corresponding class.
+     * It uses this information to create the schedules for each class and completes the classes on the classes'
+     * vectors.
+     *
+     * @param fileName Name of the file where the information is in
+     */
     void read_students(const std::string& fileName);
 
     void showStudentSchedule(int upNumber);
@@ -69,6 +82,7 @@ public:
     void showStudentsPerYearByName(char year) const;
     void showStudentsPerClass(char year, int number) const;
     void showStudentsPerUc(char type, short number) const;
+    void showStudentsIn_n_uc(int numberOfUc) const;
 };
 
 #endif //AED_PROJECT_APP_H
