@@ -17,7 +17,9 @@ private:
     Schedule calculateSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
 
 public:
+    Student();
     Student(int number);
+    Student(const std::set<Student>::iterator student);
     Student(int number, std::string& name);
     bool operator<(const Student& student);
 

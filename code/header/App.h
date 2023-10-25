@@ -16,34 +16,23 @@
  */
 class App{
 private:
-    /**
-     * @brief stores all uc's of type L.EICxxx
-     */
-    std::vector<Uc> vUc; ///< stores all uc's of type L.EICxxx
-    /**
-     * @brief stores UPxxx uc
-     */
-    std::vector<Uc> vUp; ///< stores UPxxx uc
-    /**
-     * @brief stores all the classes from the first year
-     */
-    std::vector<Class> vClass1; ///< stores all the classes from the first year
-    /**
-     * @brief stores all the classes from the second year
-     */
-    std::vector<Class> vClass2; ///< stores all the classes from the second year
 
+    std::vector<Uc> vUc; ///< stores all uc's of type L.EICxxx
+    std::vector<Uc> vUp; ///< stores UPxxx uc
+    std::vector<Class> vClass1; ///< stores all the classes from the first year
+    std::vector<Class> vClass2; ///< stores all the classes from the second year
     std::vector<Class> vClass3; ///< stores all the classes from the third year
     std::set<Student> students; ///< stores all students
-
+    /**
+     * @brief receives a Students vector and orders that same vector by student's name
+     *
+     * @param v Vector that is going to be ordered
+     */
     void sortByName(std::vector<Student>& v) const;
+    void copySetOfIntToVector(const std::set<int>& s, std::vector<Student>& v) const;
+    void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
 
 public:
-    /**
-     * @brief shows a message in case up number is not valid
-     * @param up The up number of a student
-     */
-    static void invalidUpNumber(int up);
     /**
      * @brief treats the information related to classes and uc
      *
@@ -55,7 +44,7 @@ public:
      *
      * @param fileName Name of the file where the information is in
      */
-    void read_classes_per_uc(const std::string& fileName);
+    void read_classes_per_uc(std::ifstream& file);
     /**
      * @brief treats the information related to the schedule of UC
      *
@@ -65,7 +54,7 @@ public:
      *
      * @param fileName Name of the file where the information is in
      */
-    void read_classes(const std::string& fileName);
+    void read_classes(std::ifstream& file);
     /**
      * @brief treats the information related to the schedule of UC
      *
@@ -75,7 +64,7 @@ public:
      *
      * @param fileName Name of the file where the information is in
      */
-    void read_students(const std::string& fileName);
+    void read_students(std::ifstream& file);
 
     void showStudentSchedule(int upNumber);
     void showStudentsPerYear(char year) const;

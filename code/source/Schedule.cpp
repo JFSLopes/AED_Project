@@ -2,9 +2,6 @@
 
 using namespace std;
 
-/*
- * Adds a subject to the corresponding vector, according to the day of the week
- */
 void Schedule::addSubject(Subject &subject, string day){
     switch(week[day]){
         case 1:
