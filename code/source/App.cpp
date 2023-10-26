@@ -145,13 +145,13 @@ void App::read_students(ifstream& in){
         }
         ///< Adds the student up number to the class is in
         switch (classId / 100){
-            case '1':
+            case 1:
                 vClass1[classId%100-1].addStudent(prevUP);
                 break;
-            case '2':
+            case 2:
                 vClass2[classId%100-1].addStudent(prevUP);
                 break;
-            case '3':
+            case 3:
                 vClass3[classId%100-1].addStudent(prevUP);
                 break;
         }
@@ -165,7 +165,7 @@ void App::read_students(ifstream& in){
 
         class_uc.push_back(make_pair(classId, ucId));
     }
-    showStudentsIn_n_uc(1);
+    showClassFromUc(15);
     in.close();
 }
 
@@ -273,4 +273,9 @@ void App::showStudentsIn_n_uc(int numberOfUc) const{
     for(const Student& x : orderedByName){
         if(x.getNumberOfUc() >= numberOfUc) x.showStudentData();
     }
+}
+
+void App::showClassFromUc(short ucId) const{
+    if(ucId > 100) vUp[ucId%100 - 1].showClassesForUc();
+    else vUc[ucId%100 - 1].showClassesForUc();
 }

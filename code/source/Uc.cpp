@@ -48,7 +48,7 @@ Schedule Uc::calculateSchedule(const std::vector<Class> &c1,
 
 void Uc::showClassesForUc() const{
     for(int x : classes){
-        cout << x/100 << "LEIC" << setw(3) << setfill('0') << x%100 << " ";
+        cout << x/100 << "LEIC" << setw(2) << setfill('0') << x%100 << " ";
     }
     cout<< '\n';
 }
