@@ -56,3 +56,11 @@ void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s) const{
 void Schedule::sortSchedule(){
     mon.sort(); tue.sort(); wed.sort(); thu.sort(); fri.sort();
 }
+
+void Schedule::getUc(std::set<short> &s) const{
+    for(const Subject& x : mon) s.insert(x.getUcNumber());
+    for(const Subject& x : tue) s.insert(x.getUcNumber());
+    for(const Subject& x : wed) s.insert(x.getUcNumber());
+    for(const Subject& x : thu) s.insert(x.getUcNumber());
+    for(const Subject& x : fri) s.insert(x.getUcNumber());
+}

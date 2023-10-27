@@ -165,7 +165,7 @@ void App::read_students(ifstream& in){
 
         class_uc.push_back(make_pair(classId, ucId));
     }
-    showClassFromUc(15);
+    showUcFromClass(310);
     in.close();
 }
 
@@ -278,4 +278,18 @@ void App::showStudentsIn_n_uc(int numberOfUc) const{
 void App::showClassFromUc(short ucId) const{
     if(ucId > 100) vUp[ucId%100 - 1].showClassesForUc();
     else vUc[ucId%100 - 1].showClassesForUc();
+}
+
+void App::showUcFromClass(int classId) const{
+    switch (classId / 100){
+        case 1:
+            vClass1[classId%100 - 1].showAvailableUc();
+            break;
+        case 2:
+            vClass2[classId%100 - 1].showAvailableUc();
+            break;
+        case 3:
+            vClass3[classId%100 - 1].showAvailableUc();
+            break;
+    }
 }

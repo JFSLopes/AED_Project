@@ -73,6 +73,7 @@ public:
     void showStudentsPerUc(char type, short number) const;
     void showStudentsIn_n_uc(int numberOfUc) const;
     void showClassFromUc(short ucId) const;
+    void showUcFromClass(int classId) const;
 };
 
 #endif //AED_PROJECT_APP_H

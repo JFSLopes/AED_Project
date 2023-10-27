@@ -23,6 +23,7 @@ public:
     void print() const;
     void getUcSchedule(short value, std::stack<std::pair<Subject, std::string>>& s) const;
     void sortSchedule();
+    void getUc(std::set<short>& s) const;
 };
 
 #endif //AED_PROJECT_SCHEDULE_H
