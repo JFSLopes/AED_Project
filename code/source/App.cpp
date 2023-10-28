@@ -165,7 +165,23 @@ void App::read_students(ifstream& in){
 
         class_uc.push_back(make_pair(classId, ucId));
     }
+
+    showStudentsPerClassByName(203);
+    cout << '\n' << '\n';
+    showStudentSchedule(202066542);
+    cout << '\n' << '\n';
+    showStudentsPerYear(3);
+    cout << '\n' << '\n';
+    showStudentsPerYearByName(3);
+    cout << '\n' << '\n';
+    showStudentsPerClassByName(310);
+    cout << '\n' << '\n';
+    showStudentsPerClass(310);
+    cout << '\n' << '\n';
     showUcFromClass(310);
+    cout << '\n' << '\n';
+    showClassFromUc(13);
+
     in.close();
 }
 
@@ -184,7 +200,7 @@ void App::copySetOfStudentsToVector(const std::set<Student> &s, std::vector<Stud
 void App::showStudentSchedule(int upNumber){
     set<Student>::iterator itr = students.find(Student(upNumber));
     if(itr == students.end()){
-        cout << "O número up introduzido, " << upNumber << ", não existe na base de dados.\nIntrouza um up válido.";
+        cout << "The up number " << upNumber << ", is not valid.\n";
         return;
     }
     itr->showSchedule(vClass1, vClass2, vClass3);
@@ -192,17 +208,17 @@ void App::showStudentSchedule(int upNumber){
 
 
 
-void App::showStudentsPerYear(char year) const{
+void App::showStudentsPerYear(short year) const{
     switch(year){
-        case '1':
+        case 1:
             for(const Student& x : students)
                 if(x.belongToYear(year)) x.showStudentData();
             break;
-        case '2':
+        case 2:
             for(const Student& x : students)
                 if(x.belongToYear(year)) x.showStudentData();
             break;
-        case '3':
+        case 3:
             for(const Student& x : students)
                 if(x.belongToYear(year)) x.showStudentData();
             break;
@@ -217,18 +233,18 @@ void App::sortByName(std::vector<Student> &v) const{
     sort(v.begin(), v.end(), comp);
 }
 
-void App::showStudentsPerYearByName(char year) const{
+void App::showStudentsPerYearByName(short year) const{
     vector<Student> orderedByName;
     switch(year){
-        case '1':
+        case 1:
             for(const Student& x : students)
                 if(x.belongToYear(year)) orderedByName.push_back(x);
             break;
-        case '2':
+        case 2:
             for(const Student& x : students)
                 if(x.belongToYear(year)) orderedByName.push_back(x);
             break;
-        case '3':
+        case 3:
             for(const Student& x : students)
                 if(x.belongToYear(year)) orderedByName.push_back(x);
             break;
@@ -237,26 +253,21 @@ void App::showStudentsPerYearByName(char year) const{
     for(const Student& x : orderedByName) x.showStudentData();
 }
 
-void App::showStudentsPerClass(char year, int number) const{
+void App::showStudentsPerClass(int classId) const{
+    int year = classId/100, number = classId%100;
     cout << "Class: " << year << "LEIC" << setw(2) << setfill('0') << number << '\n';
-    set<int> classStudents;
 
-    if(year == '1') classStudents = vClass1[number-1].getStudents();
-    else if(year == '2') classStudents = vClass2[number-1].getStudents();
-    else classStudents = vClass3[number-1].getStudents();
-
-    vector<Student> orderedByName;
-    copySetOfIntToVector(classStudents, orderedByName);
-    sortByName(orderedByName);
-    for(const Student& x : orderedByName) x.showStudentData();
+    if(year == '1') vClass1[number-1].showStudents(students);
+    else if(year == '2') vClass2[number-1].showStudents(students);
+    else vClass3[number-1].showStudents(students);
 }
 
-void App::showStudentsPerUc(char type, short number) const{
-    cout << (type=='L' ? "L.EIC" : "UP") << setw(3) << setfill('0') << number << '\n';
+void App::showStudentsPerUc(short ucId) const{
+    cout << (ucId < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << ucId%100 << '\n';
     set<int> ucStudents;
 
-    if(type == 'L') ucStudents = vUc[number-1].getStudents();
-    else ucStudents = vUp[number-1].getStudents();
+    if(ucId < 100) ucStudents = vUc[ucId%100-1].getStudents();
+    else ucStudents = vUp[ucId%100-1].getStudents();
 
     vector<Student> orderedByName;
     copySetOfIntToVector(ucStudents, orderedByName);
@@ -290,6 +301,20 @@ void App::showUcFromClass(int classId) const{
             break;
         case 3:
             vClass3[classId%100 - 1].showAvailableUc();
+            break;
+    }
+}
+
+void App::showStudentsPerClassByName(int classId) const{
+    switch (classId / 100){
+        case 1:
+            vClass1[classId%100 - 1].showStudentsOrderedByName(students);
+            break;
+        case 2:
+            vClass2[classId%100 - 1].showStudentsOrderedByName(students);
+            break;
+        case 3:
+            vClass3[classId%100 - 1].showStudentsOrderedByName(students);
             break;
     }
 }

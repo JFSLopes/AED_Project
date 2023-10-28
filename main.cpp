@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main() {
+int main(){
     App app;
     string header;
     std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");

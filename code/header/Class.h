@@ -1,15 +1,19 @@
 #ifndef AED_PROJECT_CLASS_H
 #define AED_PROJECT_CLASS_H
 
+class Schedule;
+class Student;
+
 #include "Schedule.h"
+#include "Student.h"
 
 class Class{
 private:
-    /**
-     *
-     */
     Schedule schedule;
     std::set<int> students;
+
+    void OrderedByName(const std::set<Student>& allStudents, std::vector<Student>& ordered) const;
+
 public:
     void completeSchedule(Subject& subject, std::string day);
     /**
@@ -28,7 +32,8 @@ public:
     void showSchedule();
     void showAvailableUc() const;
     void addStudent(int up);
-    std::set<int> getStudents() const;
+    void showStudents(const std::set<Student>& allStudents) const;
+    void showStudentsOrderedByName(const std::set<Student>& allStudents) const;
 };
 
 #endif //AED_PROJECT_CLASS_H

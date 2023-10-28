@@ -1,7 +1,8 @@
 #ifndef AED_PROJECT_UC_H
 #define AED_PROJECT_UC_H
 
-#include "Schedule.h"
+class Class;
+
 #include "Class.h"
 
 

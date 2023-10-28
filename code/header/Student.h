@@ -1,11 +1,11 @@
 #ifndef AED_PROJECT_STUDENT_H
 #define AED_PROJECT_STUDENT_H
 
-#include "Schedule.h"
-#include "Class.h"
-#include "Uc.h"
+class Class;
+
 #include <string>
 #include <list>
+#include "Class.h"
 
 class Student{
 private:
@@ -34,6 +34,8 @@ public:
     void showStudentData() const;
     void showSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
     bool belongToYear(char year) const;
+
+    bool operator==(const Student& student);
 
 
 };

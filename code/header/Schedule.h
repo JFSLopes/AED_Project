@@ -1,6 +1,8 @@
 #ifndef AED_PROJECT_SCHEDULE_H
 #define AED_PROJECT_SCHEDULE_H
 
+class Subject;
+
 #include "Subject.h"
 #include <list>
 #include <set>

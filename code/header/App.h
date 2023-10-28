@@ -1,13 +1,20 @@
 #ifndef AED_PROJECT_APP_H
 #define AED_PROJECT_APP_H
 
+class Uc;
+class Class;
+class Student;
+class Display;
+
 #include <string>
 #include <vector>
 #include <set>
 #include <iomanip>
 #include "Uc.h"
+#include "Display.h"
 #include "Class.h"
 #include "Student.h"
+
 /**
  * @class App
  * @brief App reads from the files and stores the data
@@ -29,6 +36,14 @@ private:
      * @param v Vector that is going to be ordered
      */
     void sortByName(std::vector<Student>& v) const;
+    /**
+     * @brief
+     *
+     *
+     *
+     * @param s
+     * @param v
+     */
     void copySetOfIntToVector(const std::set<int>& s, std::vector<Student>& v) const;
     void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
 
@@ -66,11 +81,16 @@ public:
      */
     void read_students(std::ifstream& file);
 
+    void Inicialize();
+    void tasks();
     void showStudentSchedule(int upNumber);
-    void showStudentsPerYear(char year) const;
-    void showStudentsPerYearByName(char year) const;
-    void showStudentsPerClass(char year, int number) const;
-    void showStudentsPerUc(char type, short number) const;
+    void showStudentsPerYear(short year) const;
+    void showStudentsPerYearByName(short year) const;
+
+    void showStudentsPerClass(int classId) const;
+    void showStudentsPerClassByName(int classId) const;
+
+    void showStudentsPerUc(short ucId) const;
     void showStudentsIn_n_uc(int numberOfUc) const;
     void showClassFromUc(short ucId) const;
     void showUcFromClass(int classId) const;

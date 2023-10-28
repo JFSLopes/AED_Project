@@ -15,6 +15,10 @@ bool Student::operator<(const Student &student){
     return this->UPnumber < student.UPnumber;
 }
 
+bool Student::operator==(const Student &student){
+    return this->getUpNumber() == student.getUpNumber();
+}
+
 int Student::getUpNumber() const {
     return UPnumber;
 }
