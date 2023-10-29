@@ -9,4 +9,5 @@ add_executable(AED_Project main.cpp
         code/source/Schedule.cpp
         code/source/Student.cpp
         code/source/Subject.cpp
-        code/source/Uc.cpp)
+        code/source/Uc.cpp
+        code/source/Display.cpp)

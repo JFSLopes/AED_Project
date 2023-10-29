@@ -34,6 +34,7 @@ private:
     std::vector<Class> vClass3; ///< stores all the classes from the third year
     std::set<Student> students; ///< stores all students
     Request requests;
+    Display display;
     /**
      * @brief receives a Students vector and orders that same vector by student's name
      *
@@ -54,6 +55,13 @@ private:
      * @param v Vector that is going to be filled with the students
      */
     void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
+    /**
+     * @brief Check if the given class is valid and return the id of the class as an integer if exists or -1 otherwise.
+     *
+     * @param s
+     * @return Return an integer representing the id of the class or -1 if class does not exist.
+     */
+    int convertStringToClassId(std::string& s) const;
 
 public:
     /**
@@ -88,8 +96,9 @@ public:
      */
     void read_students(std::ifstream& file);
 
-    void Inicialize();
-    void tasks();
+    void inicialize();
+    void showSchedules();
+    void openFiles();
     /**
      * @brief Displays the schedule of a given student.
      *
@@ -171,14 +180,12 @@ public:
      * @return The number of students in the class.
      */
     int getNumberOfStudentsInClass(int classId) const;
-    /**
-     *
-     * @param classId
-     * @param ucId
-     */
+
     void studentsPerClassPerUc(int classId, short ucId) const;
 
     void showUcWithGreaterOccupation(int n) const;
+
+    void showClassSchedule(int classId) const;
 };
 
 #endif //AED_PROJECT_APP_H

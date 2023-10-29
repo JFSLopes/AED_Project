@@ -1,7 +1,10 @@
 #ifndef AED_PROJECT_DISPLAY_H
 #define AED_PROJECT_DISPLAY_H
 
+#include <iostream>
+
 class Display{
+public:
     void description() const;
 
     void menu() const;

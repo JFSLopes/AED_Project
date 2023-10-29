@@ -3,6 +3,118 @@
 #include <iostream>
 using namespace std;
 
+void App::inicialize(){
+    openFiles();
+    display.description();
+    while(true){
+        short option;
+        display.menu();
+        cin >> option;
+        switch(option){
+            case 1:
+                showSchedules();
+                break;
+            case 6:
+                return;
+            default:
+                cout << "The typed number id not valid.\n";
+        }
+    }
+}
+
+void App::showSchedules(){
+    while(true){
+        short option;
+        display.schedule();
+        cin >> option;
+        char ch;
+        switch(option){
+            case 1: {
+                int upNumber;
+                while (true) {
+                    cout << "Enter student up number: ";
+                    cin >> upNumber;
+                    if (students.find(upNumber) != students.end()) break;
+                    else cout << upNumber << " does not exist.\n";
+                }
+                showStudentSchedule(upNumber);
+                while (true) {
+                    cout << "Digit 'y' to keep using the API: ";
+                    cin >> ch;
+                    if (ch == 'y') break;
+                }
+                break;
+            }
+
+            case 2: {
+
+                break;
+            }
+
+            case 3: {
+                string sClass;
+                int classId;
+                while (true) {
+                    cout << "Enter the class (yLEICxx): ";
+                    cin >> sClass;
+                    classId = convertStringToClassId(sClass);
+                    if (classId != -1) break;
+                    else cout << sClass << " does not exist.\n";
+                }
+                showClassSchedule(classId);
+                while (true) {
+                    cout << "Digit 'y' to keep using the API: ";
+                    cin >> ch;
+                    if (ch == 'y') break;
+                }
+                break;
+            }
+
+            case 4:
+                return;
+            default:
+                cout << "The typed number id not valid.\n";
+
+        }
+    }
+}
+
+int App::convertStringToClassId(std::string &s) const{
+    if(s.size() != 7){
+        cout  << s << " is not a valid Class.\n";
+    }
+    if(s[0] >= '1' and s[0] <= '3' and (s[1] == 'L' or s[1] == 'l') and (s[2] == 'E' or s[2] == 'e') and
+      (s[3] == 'I' or s[3] == 'i') and (s[4] == 'C' or s[4] == 'c') and (s[5] >= '0' and s[5] <= '1') and
+      (s[6] >= '0' and s[6] <= '9')) return (s[0] - '0') * 100 + (s[5] - '0') * 10 + (s[6] - '0');
+    return -1;
+}
+
+void App::openFiles(){
+    string header;
+    std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    if(!file1.is_open()){
+        cout << "Invalid name for file with classes and uc\n";
+        return;
+    }
+    std::getline(file1, header);
+    std::ifstream file2("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
+    if(!file2.is_open()){
+        cout << "Invalid name for file with the schedule for a uc in a class\n";
+        return;
+    }
+    std::getline(file2, header);
+    std::ifstream file3("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
+    if(!file3.is_open()){
+        cout << "Invalid name for file with students' information\n";
+        return;
+    }
+    std::getline(file3, header);
+
+    read_classes_per_uc(file1);
+    read_classes(file2);
+    read_students(file3);
+}
+
 void App::read_classes_per_uc(ifstream& in){
     string line;
     while(getline(in, line)){
@@ -165,19 +277,6 @@ void App::read_students(ifstream& in){
 
         class_uc.push_back(make_pair(classId, ucId));
     }
-    studentsPerClassPerUc(302,22);
-    cout << '\n';
-    /*
-    studentsPerClassPerUc(212,12);
-    cout<< '\n';
-    studentsPerClassPerUc(212,13);
-    cout<< '\n';
-    studentsPerClassPerUc(212,14);
-    cout<< '\n';
-    studentsPerClassPerUc(212,15);
-    cout<< '\n';
-     */
-
     in.close();
 }
 
@@ -351,6 +450,20 @@ void App::studentsPerClassPerUc(int classId, short ucId) const{
     sortByName(temp);
     for(auto x : temp) x.showStudentData();
     cout << temp.size() << ": ";
+}
+
+void App::showClassSchedule(int classId) const{
+    switch (classId / 100){
+        case 1:
+            vClass1[classId%100 - 1].showSchedule();
+            break;
+        case 2:
+            vClass2[classId%100 - 1].showSchedule();
+            break;
+        case 3:
+            vClass3[classId%100 - 1].showSchedule();
+            break;
+    }
 }
 
 void App::showUcWithGreaterOccupation(int n) const{

@@ -20,6 +20,7 @@ void Schedule::addSubject(Subject &subject, string day){
             fri.push_back(subject);
             break;
     }
+    sortSchedule();
 }
 
 void Schedule::print() const{
