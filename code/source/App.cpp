@@ -165,31 +165,25 @@ void App::read_students(ifstream& in){
 
         class_uc.push_back(make_pair(classId, ucId));
     }
-
-    showStudentsPerClassByName(203);
-    cout << '\n' << '\n';
-    showStudentSchedule(202066542);
-    cout << '\n' << '\n';
-    showStudentsPerYear(3);
-    cout << '\n' << '\n';
-    showStudentsPerYearByName(3);
-    cout << '\n' << '\n';
-    showStudentsPerClassByName(310);
-    cout << '\n' << '\n';
-    showStudentsPerClass(310);
-    cout << '\n' << '\n';
-    showUcFromClass(310);
-    cout << '\n' << '\n';
-    showClassFromUc(13);
+    studentsPerClassPerUc(302,22);
+    cout << '\n';
+    /*
+    studentsPerClassPerUc(212,12);
+    cout<< '\n';
+    studentsPerClassPerUc(212,13);
+    cout<< '\n';
+    studentsPerClassPerUc(212,14);
+    cout<< '\n';
+    studentsPerClassPerUc(212,15);
+    cout<< '\n';
+     */
 
     in.close();
 }
 
 void App::copySetOfIntToVector(const std::set<int>& s, std::vector<Student> &v) const{
     for (int x : s){
-        Student aux(x);
-        aux = *(students.find(Student(x)));
-        v.push_back(aux);
+        v.push_back(*(students.find(x)));
     }
 }
 
@@ -198,7 +192,7 @@ void App::copySetOfStudentsToVector(const std::set<Student> &s, std::vector<Stud
 }
 
 void App::showStudentSchedule(int upNumber){
-    set<Student>::iterator itr = students.find(Student(upNumber));
+    set<Student>::iterator itr = students.find(upNumber);
     if(itr == students.end()){
         cout << "The up number " << upNumber << ", is not valid.\n";
         return;
@@ -277,9 +271,7 @@ void App::showStudentsPerUc(short ucId) const{
 
 void App::showStudentsIn_n_uc(int numberOfUc) const{
     vector<Student> orderedByName;
-    for (const Student& x : students){
-        orderedByName.push_back(x);
-    }
+    copySetOfStudentsToVector(students, orderedByName);
     sortByName(orderedByName);
     for(const Student& x : orderedByName){
         if(x.getNumberOfUc() >= numberOfUc) x.showStudentData();
@@ -317,4 +309,50 @@ void App::showStudentsPerClassByName(int classId) const{
             vClass3[classId%100 - 1].showStudentsOrderedByName(students);
             break;
     }
+}
+
+int App::getNumberOfStudentsInClass(int classId) const{
+    switch (classId / 100){
+        case 1:
+            return vClass1[classId%100 - 1].getNumberOfStudents();
+        case 2:
+            return vClass2[classId%100 - 1].getNumberOfStudents();
+        case 3:
+            return vClass3[classId%100 - 1].getNumberOfStudents();
+    }
+    return -1;
+}
+
+void App::studentsPerClassPerUc(int classId, short ucId) const{
+    set<int> studentsFromClass;
+    switch (classId / 100){
+        case 1:
+            studentsFromClass = vClass1[classId%100 - 1].getStudents();
+            break;
+        case 2:
+            studentsFromClass = vClass2[classId%100 - 1].getStudents();
+            break;
+        case 3:
+            studentsFromClass = vClass3[classId%100 - 1].getStudents();
+            break;
+    }
+    set<int> studentsFromUc;
+    if(ucId > 100) studentsFromUc = vUp[ucId%100 - 1].getStudents();
+    else studentsFromUc = vUc[ucId%100 - 1].getStudents();
+    vector<int> common;
+    set_intersection(studentsFromClass.begin(), studentsFromClass.end(),
+                     studentsFromUc.begin(), studentsFromUc.end(),
+                     std::back_inserter(common));
+    vector<Student> temp;
+    for(int x : common){
+        auto itr = students.find(x);
+        if((itr->class_uc(classId, ucId))) temp.push_back(*itr);
+    }
+    sortByName(temp);
+    for(auto x : temp) x.showStudentData();
+    cout << temp.size() << ": ";
+}
+
+void App::showUcWithGreaterOccupation(int n) const{
+
 }

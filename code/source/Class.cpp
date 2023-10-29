@@ -12,6 +12,9 @@ void Class::showSchedule(){
     schedule.print();
 }
 
+int Class::getNumberOfStudents() const{
+    return students.size();
+}
 
 void Class::addStudent(int up){
     students.insert(up);
@@ -50,4 +53,8 @@ void Class::showStudentsOrderedByName(const std::set<Student> &allStudents) cons
     vector<Student> ordered;
     OrderedByName(allStudents, ordered);
     for(const Student& x : ordered) x.showStudentData();
+}
+
+std::set<int> Class::getStudents() const{
+    return students;
 }

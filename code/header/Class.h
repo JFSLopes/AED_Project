@@ -30,6 +30,8 @@ public:
      * @brief sorts the schedule by starting hour and prints it to the console
      */
     void showSchedule();
+    int getNumberOfStudents() const;
+    std::set<int> getStudents() const;
     void showAvailableUc() const;
     void addStudent(int up);
     void showStudents(const std::set<Student>& allStudents) const;
