@@ -56,3 +56,11 @@ void Display::sortOptions() const{
          << "\t4. Sort by descending alphabetic order\n";
     cout << "[1..4]: ";
 }
+
+void Display::changes() const {
+    cout << "Choose an option by entering the corresponding number:\n"
+         << "\t1. Change UC\n"
+         << "\t2. Change class\n"
+         << "\t3. Return to the previous menu\n";
+    cout << "[1..3]: ";
+}
