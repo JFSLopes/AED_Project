@@ -15,19 +15,19 @@ void UcChange::showChange() const{
     switch (operation){
         case 1: {
             cout << "\tAdded UC " << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << "from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
             break;
         }
         case 2: {
             cout << "\tRemoved UC " << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << "from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
             break;
         }
         case 3: {
             cout << "\tSwitch UC (" << (prev.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << prev.second % 100
                  << ") from class (" << prev.first / 100 << "LEIC" << prev.first %100 << ") to UC ("
                  << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << "from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
             break;
         }
     }

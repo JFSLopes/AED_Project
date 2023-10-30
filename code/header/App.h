@@ -311,6 +311,7 @@ public:
     bool isPossibleAddUc(int upNumber) const;
     bool isPossibleAddClass() const;
     int classWithVacancy(short ucId, int upNumber);
+    bool conflict(int upNumber, std::stack<std::pair<Subject, std::string>>& s) const;
 };
 
 #endif //AED_PROJECT_APP_H

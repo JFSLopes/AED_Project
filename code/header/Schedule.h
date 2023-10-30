@@ -26,6 +26,7 @@ public:
     void getUcSchedule(short value, std::stack<std::pair<Subject, std::string>>& s) const;
     void sortSchedule();
     void getUc(std::set<short>& s) const;
+    bool conflict(std::stack<std::pair<Subject, std::string>>& s) const;
 };
 
 #endif //AED_PROJECT_SCHEDULE_H

@@ -22,3 +22,15 @@ bool operator<(const Subject &a, const Subject &b){
     return false;
 }
 
+std::string Subject::getType() const{
+    return type;
+}
+
+float Subject::getStartHour() const{
+    return startHour;
+}
+
+float Subject::getEndHour() const{
+    return startHour + duration;
+}
+

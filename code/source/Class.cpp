@@ -16,6 +16,7 @@ int Class::getNumberOfStudents() const{
 }
 
 void Class::addStudent(int up){
+    cout << "Por favor\n";
     students.insert(up);
 }
 

@@ -15,6 +15,9 @@ public:
     Subject(short UcNumber, std::string& type, float start, float duration);
     void show() const;
     short getUcNumber() const;
+    std::string getType() const;
+    float getStartHour() const;
+    float getEndHour() const;
 
     friend bool operator<(const Subject& a, const Subject& b);
 };

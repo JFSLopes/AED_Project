@@ -65,3 +65,47 @@ void Schedule::getUc(std::set<short> &s) const{
     for(const Subject& x : thu) s.insert(x.getUcNumber());
     for(const Subject& x : fri) s.insert(x.getUcNumber());
 }
+
+bool Schedule::conflict(std::stack<std::pair<Subject,std::string>>& s) const{
+    while(!s.empty()){
+        if(s.top().first.getType() != "T") {
+            if (s.top().second == "Monday") {
+                for (auto itr = mon.begin(); itr != mon.end(); itr++) {
+                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
+                        and itr->getStartHour() <= s.top().first.getEndHour())
+                        return true;
+                }
+            }
+            else if(s.top().second == "Tuesday") {
+                for (auto itr = tue.begin(); itr != tue.end(); itr++) {
+                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
+                        and itr->getStartHour() <= s.top().first.getEndHour())
+                        return true;
+                }
+            }
+            else if(s.top().second == "Wednesday") {
+                for (auto itr = wed.begin(); itr != wed.end(); itr++) {
+                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
+                        and itr->getStartHour() <= s.top().first.getEndHour())
+                        return true;
+                }
+            }
+            else if(s.top().second == "Thursday") {
+                for (auto itr = thu.begin(); itr != thu.end(); itr++) {
+                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
+                        and itr->getStartHour() <= s.top().first.getEndHour())
+                        return true;
+                }
+            }
+            else if(s.top().second == "Friday") {
+                for (auto itr = fri.begin(); itr != fri.end(); itr++) {
+                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
+                        and itr->getStartHour() <= s.top().first.getEndHour())
+                        return true;
+                }
+            }
+        }
+        s.pop();
+    }
+    return false;
+}

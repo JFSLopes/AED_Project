@@ -29,6 +29,7 @@ public:
     std::list<std::pair<int,short>> getList() const;
 
     void setclass_Uc(std::list<std::pair<int,short>>& l);
+    void setclass_uc(std::pair<int,short> l);
     void setEnrolledYears(const std::string& s);
 
     void showStudentData() const;

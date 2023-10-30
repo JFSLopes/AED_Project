@@ -97,3 +97,7 @@ bool Student::checkUc(short ucId) const {
     }
     return false;
 }
+
+void Student::setclass_uc(std::pair<int, short> l){
+    class_Uc.push_back(l);
+}
