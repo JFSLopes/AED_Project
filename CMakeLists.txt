@@ -11,4 +11,5 @@ add_executable(AED_Project main.cpp
         code/source/Subject.cpp
         code/source/Uc.cpp
         code/source/Display.cpp
-        code/source/Change.cpp)
+        code/source/Change.cpp
+        code/source/Request.cpp)

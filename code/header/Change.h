@@ -11,7 +11,7 @@
  */
 class Change{
     public:
-        virtual void showChange() const = 0;
+        virtual void showChange() const;
 };
 
 class UcChange : public Change{

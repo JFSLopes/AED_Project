@@ -142,7 +142,10 @@ public:
      */
     void showOccupation() const;
 
-    void processChange() const;
+    void processChange();
+    void ucChangeOperation();
+    void classChangeOperation();
+
     /**
      * @brief Transforms a class input in a class ID.
      *
@@ -305,6 +308,9 @@ public:
      * @param ucId Indicates the UC.
      */
     void showUcSchedule(short ucId) const;
+    bool isPossibleAddUc(int upNumber) const;
+    bool isPossibleAddClass() const;
+    int classWithVacancy(short ucId, int upNumber);
 };
 
 #endif //AED_PROJECT_APP_H

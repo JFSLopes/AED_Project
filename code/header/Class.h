@@ -31,6 +31,8 @@ public:
      */
     void showSchedule() const;
     int getNumberOfStudents() const;
+    bool isPossibleAddStudent() const;
+    bool isPossibleRemoveStudent() const;
     std::set<int> getStudents() const;
     void showAvailableUc() const;
     void addStudent(int up);

@@ -61,3 +61,7 @@ void Uc::addStudent(int up){
 std::set<int> Uc::getStudents() const{
     return students;
 }
+
+std::set<int> Uc::getClasses() const {
+    return classes;
+}

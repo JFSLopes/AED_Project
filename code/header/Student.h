@@ -38,6 +38,7 @@ public:
     bool class_uc(int classId, short ucId) const;
 
     bool operator==(const Student& student);
+    bool checkUc(short ucId) const;
 
 
 };

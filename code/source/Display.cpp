@@ -64,3 +64,21 @@ void Display::changes() const {
          << "\t3. Return to the previous menu\n";
     cout << "[1..3]: ";
 }
+
+void Display::showchangeoptions(short type) const {
+    if (type == 0){
+        cout << "Choose an option by entering the corresponding number:\n"
+                << "\t1. Add a new UC\n"
+                << "\t2. Remove a current UC\n"
+                << "\t3. Switch Uc's\n"
+                << "\t4. Return to the previous menu\n";
+    }
+    else{
+        cout << "Choose an option by entering the corresponding number:\n"
+             << "\t1. Add a new Class\n"
+             << "\t2. Remove a current Class\n"
+             << "\t3. Switch Classes\n"
+             << "\t4. Return to the previous menu\n";
+    }
+    cout << "[1..4]: ";
+}

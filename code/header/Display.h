@@ -20,6 +20,10 @@ public:
 
     void sortOptions() const;
 
+    void changes() const;
+
+    void showchangeoptions(short type) const;
+
 
 
     void classOcc() const;
@@ -28,8 +32,7 @@ public:
     void course() const;
     void nUc() const;
     void greaterOcc() const;
-
-    void changes() const;
+    
     void classChange() const;
     void UcChange() const;
 

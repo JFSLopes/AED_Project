@@ -90,3 +90,10 @@ string Student::getName() const{
 bool Student::class_uc(int classId, short ucId) const{
     return find(class_Uc.begin(), class_Uc.end(), make_pair(classId, ucId)) != class_Uc.end();
 }
+
+bool Student::checkUc(short ucId) const {
+    for (auto x : class_Uc) {
+        if(x.second == ucId) return true;
+    }
+    return false;
+}

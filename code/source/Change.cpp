@@ -2,6 +2,10 @@
 
 using namespace std;
 
+void Change::showChange() const {
+    cout << "ok";
+}
+
 
 UcChange::UcChange(short operation, std::pair<int, short> prev, std::pair<int, short> change)
 : operation(operation), prev(prev), change(change) {}

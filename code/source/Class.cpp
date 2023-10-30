@@ -1,7 +1,7 @@
 #include "../header/Class.h"
 
 using namespace std;
-
+int CAP = 100;
 
 void Class::completeSchedule(Subject &subject, std::string day){
     schedule.addSubject(subject, day);
@@ -40,4 +40,12 @@ void Class::OrderedByName(const std::set<Student> &allStudents, std::vector<Stud
 
 std::set<int> Class::getStudents() const{
     return students;
+}
+
+bool Class::isPossibleAddStudent() const {
+    return getNumberOfStudents() < CAP;
+}
+
+bool Class::isPossibleRemoveStudent() const {
+    return getNumberOfStudents() > 0;
 }

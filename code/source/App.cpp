@@ -43,7 +43,7 @@ short App::ucIdRequest() const{
     string sUc;
     short ucId;
     while (true) {
-        cout << "Enter the class (L.EICxxx / UPxxx): ";
+        cout << "Enter the UC (L.EICxxx / UPxxx): ";
         cin >> sUc;
         ucId = convertStringToUcId(sUc);
         if (ucId != -1) break;
@@ -189,12 +189,35 @@ void App::showOccupation() const{
             case 8: {
                 return;
             }
+            default:
+                cout << "Invalid input.\n";
+                continue;
         }
         waitingState();
     }
 }
 
-void App::processChange() const{
+void App::processChange(){
+    while (true){
+        string input;
+        display.changes();
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option) {
+            case 1: {
+                ucChangeOperation();
+                break;
+            }
+            case 2: {
+                classChangeOperation();
+                break;
+            }
+            default:
+                cout << "Invalid input.\n";
+                continue;
+        }
+        waitingState();
+    }
     // função que pede um up -> studentUpRequest();
     // função para um UC -> ucIdRequest();
     // Class -> classIdRequest();
@@ -225,19 +248,19 @@ short App::convertStringToUcId(std::string& s) const{
 
 void App::openFiles(){
     string header;
-    std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    std::ifstream file1("/Users/marioaraujo/Desktop/AED_Project/schedule/classes_per_uc.csv");
     if(!file1.is_open()){
         cout << "Invalid name for file with classes and uc\n";
         return;
     }
     std::getline(file1, header);
-    std::ifstream file2("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
+    std::ifstream file2("/Users/marioaraujo/Desktop/AED_Project/schedule/classes.csv");
     if(!file2.is_open()){
         cout << "Invalid name for file with the schedule for a uc in a class\n";
         return;
     }
     std::getline(file2, header);
-    std::ifstream file3("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
+    std::ifstream file3("/Users/marioaraujo/Desktop/AED_Project/schedule/students_classes.csv");
     if(!file3.is_open()){
         cout << "Invalid name for file with students' information\n";
         return;
@@ -630,3 +653,118 @@ void App::showAllStudents(short sortAlgorithm) const{
     if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
     else reverseShowSudents(vStudents);
 }
+
+void App::ucChangeOperation(){
+    while (true) {
+        string input;
+        display.showchangeoptions(0);
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option) {
+            case 1: {
+                int upNumber = studentUpRequest();
+                short ucId = ucIdRequest();
+                if(isPossibleAddUc(upNumber)){
+                    auto itr = students.find(upNumber);
+                    if(itr->checkUc(ucId)){
+                        cout << "Already enrolled in UC.\n";
+                        break;
+                    }
+                    int classId = classWithVacancy(ucId,upNumber);
+                    if(classId == -1){
+                        cout << "No existing classes with vacancies.\n";
+                        break;
+                    }
+                    UcChange change (1, make_pair(0,0), make_pair(classId,ucId));
+                    requests.addStack(change);
+                    change.showChange();
+                }
+                break;
+            }
+            case 2: {
+                int upNumber = studentUpRequest();
+                short ucId = ucIdRequest();
+                break;
+            }
+            case 3:{
+                int upNumber = studentUpRequest();
+                cout << "Choose the one to be removed. ";
+                short ucId = ucIdRequest();
+                cout << "Choose the one to be added. ";
+                short ucId1 = ucIdRequest();
+                break;
+            }
+            case 4:
+                return;
+            default:
+                cout << "Invalid input.\n";
+                continue;
+        }
+        waitingState();
+
+    }
+}
+
+void App::classChangeOperation(){
+    while (true){
+        string input;
+        display.showchangeoptions(1);
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option) {
+            case 1: {
+                int upNumber = studentUpRequest();
+                int classId = classIdRequest();
+                break;
+            }
+            case 2: {
+                int upNumber = studentUpRequest();
+                int classId = classIdRequest();
+                break;
+            }
+            case 3:{
+                int upNumber = studentUpRequest();
+                cout << "Choose the one to be removed. ";
+                int classId = classIdRequest();
+                cout << "Choose the one to be added. ";
+                int classId1 = classIdRequest();
+                break;
+            }
+            case 4:
+                return;
+            default:
+                cout << "Invalid input.\n";
+                continue;
+        }
+        waitingState();
+    }
+}
+
+bool App::isPossibleAddUc(int upNumber) const {
+    auto itr = students.find(upNumber);
+    return itr->getNumberOfUc() < 7;
+}
+
+int App::classWithVacancy(short ucId, int upNumber){
+    std::set<int> sClasses;
+    if(ucId <= 100) sClasses = vUc[ucId % 100 - 1].getClasses();
+    else sClasses = vUp[ucId % 100 - 1].getClasses();
+    for(int x : sClasses){
+        switch (x / 100){
+            case 1:
+                if(vClass1[x%100 - 1].isPossibleAddStudent()){
+                    vClass1[x%100 - 1].addStudent(upNumber);
+                    return x;
+                }
+                break;
+            case 2:
+                if(vClass2[x%100 - 1].isPossibleAddStudent()) return x;
+                break;
+            case 3:
+                if(vClass3[x%100 - 1].isPossibleAddStudent()) return x;
+                break;
+        }
+    }
+    return -1;
+}
+

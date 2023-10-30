@@ -23,6 +23,7 @@ public:
     void showClassesForUc() const;
 
     std::set<int> getStudents() const;
+    std::set<int> getClasses() const;
 
 
 };
