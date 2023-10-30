@@ -141,6 +141,8 @@ public:
      * This function receives an input from the user anf from there displays the occupation requested by the user.
      */
     void showOccupation() const;
+
+    void processChange() const;
     /**
      * @brief Transforms a class input in a class ID.
      *

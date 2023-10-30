@@ -17,6 +17,9 @@ void App::inicialize(){
             case 2:
                 showOccupation();
                 break;
+            case 3:
+                processChange();
+                break;
             case 6:
                 return;
             default:
@@ -191,6 +194,12 @@ void App::showOccupation() const{
     }
 }
 
+void App::processChange() const{
+    // função que pede um up -> studentUpRequest();
+    // função para um UC -> ucIdRequest();
+    // Class -> classIdRequest();
+}
+
 int App::convertStringToClassId(std::string& s) const{
     if(s.size() != 7){
         cout  << s << " is not a valid Class.\n";
@@ -216,19 +225,19 @@ short App::convertStringToUcId(std::string& s) const{
 
 void App::openFiles(){
     string header;
-    std::ifstream file1("/Users/marioaraujo/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
     if(!file1.is_open()){
         cout << "Invalid name for file with classes and uc\n";
         return;
     }
     std::getline(file1, header);
-    std::ifstream file2("/Users/marioaraujo/Desktop/AED_Project/schedule/classes.csv");
+    std::ifstream file2("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
     if(!file2.is_open()){
         cout << "Invalid name for file with the schedule for a uc in a class\n";
         return;
     }
     std::getline(file2, header);
-    std::ifstream file3("/Users/marioaraujo/Desktop/AED_Project/schedule/students_classes.csv");
+    std::ifstream file3("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
     if(!file3.is_open()){
         cout << "Invalid name for file with students' information\n";
         return;
