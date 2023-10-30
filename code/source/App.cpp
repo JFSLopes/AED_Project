@@ -14,6 +14,9 @@ void App::inicialize(){
             case 1:
                 showSchedules();
                 break;
+            case 2:
+                showOccupation();
+                break;
             case 6:
                 return;
             default:
@@ -22,70 +25,192 @@ void App::inicialize(){
     }
 }
 
-void App::showSchedules(){
+int App::studentUpRequest() const{
+    int upNumber;
+    while (true){
+        cout << "Enter student up number: ";
+        cin >> upNumber;
+        if (students.find(upNumber) != students.end()) break;
+        else cout << upNumber << " does not exist.\n";
+    }
+    return upNumber;
+}
+
+short App::ucIdRequest() const{
+    string sUc;
+    short ucId;
+    while (true) {
+        cout << "Enter the class (L.EICxxx / UPxxx): ";
+        cin >> sUc;
+        ucId = convertStringToUcId(sUc);
+        if (ucId != -1) break;
+        else cout << sUc << " does not exist.\n";
+    }
+    return ucId;
+}
+
+int App::classIdRequest() const{
+    string sClass;
+    int classId;
+    while (true) {
+        cout << "Enter the class (yLEICxx): ";
+        cin >> sClass;
+        classId = convertStringToClassId(sClass);
+        if (classId != -1) break;
+        else cout << sClass << " does not exist.\n";
+    }
+    return classId;
+}
+
+short App::singleNumberRequest(std::string& s) const{
     while(true){
-        short option;
-        display.schedule();
-        cin >> option;
-        char ch;
-        switch(option){
-            case 1: {
-                int upNumber;
-                while (true) {
-                    cout << "Enter student up number: ";
-                    cin >> upNumber;
-                    if (students.find(upNumber) != students.end()) break;
-                    else cout << upNumber << " does not exist.\n";
-                }
-                showStudentSchedule(upNumber);
-                while (true) {
-                    cout << "Digit 'y' to keep using the API: ";
-                    cin >> ch;
-                    if (ch == 'y') break;
-                }
-                break;
-            }
-
-            case 2: {
-
-                break;
-            }
-
-            case 3: {
-                string sClass;
-                int classId;
-                while (true) {
-                    cout << "Enter the class (yLEICxx): ";
-                    cin >> sClass;
-                    classId = convertStringToClassId(sClass);
-                    if (classId != -1) break;
-                    else cout << sClass << " does not exist.\n";
-                }
-                showClassSchedule(classId);
-                while (true) {
-                    cout << "Digit 'y' to keep using the API: ";
-                    cin >> ch;
-                    if (ch == 'y') break;
-                }
-                break;
-            }
-
-            case 4:
-                return;
-            default:
-                cout << "The typed number id not valid.\n";
-
+        if(s.size() == 1 and (s[0] >= '0' and s[0] <= '9')) return (s[0] - '0');
+        else{
+            cout << "Invalid input: Enter a number from 1 to 9: ";
+            cin >> s;
         }
     }
 }
 
-int App::convertStringToClassId(std::string &s) const{
+std::pair<int, short> App::class_ucRequest() const{
+    int classId = classIdRequest();
+    short ucId = ucIdRequest();
+    return make_pair(classId, ucId);
+}
+
+bool App::waitingState() const {
+    char ch;
+    while (true) {
+        cout << "Digit 'y' to keep using the API: ";
+        cin >> ch;
+        if (ch == 'y') return true;
+    }
+}
+
+void App::showSchedules() const{
+    while(true){
+        string input;
+        display.schedule();
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch(option){
+            case 1: {
+                int upNumber = studentUpRequest();
+                showStudentSchedule(upNumber);
+                break;
+            }
+            case 2: {
+                short ucId = ucIdRequest();
+                showUcSchedule(ucId);
+                break;
+            }
+            case 3: {
+                int classId = classIdRequest();
+                showClassSchedule(classId);
+                break;
+            }
+            case 4:
+                return;
+            default:
+                cout << "The typed number id not valid.\n";
+                continue;
+        }
+        waitingState();
+    }
+}
+
+void App::showOccupation() const{
+    while(true){
+        string input;
+        display.occupation();
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option){
+            case 1: {
+                int classId = classIdRequest();
+                showStudentsPerClass(classId, Display::sortAlgorithm);
+                break;
+            }
+            case 2: {
+                short ucId = ucIdRequest();
+                showStudentsPerUc(ucId, Display::sortAlgorithm);
+                break;
+            }
+            case 3: {
+                pair<int, short> class_uc = class_ucRequest();
+                showStudentsPerClassPerUc(class_uc.first, class_uc.second, Display::sortAlgorithm);
+                break;
+            }
+            case 4: {
+                showAllStudents(Display::sortAlgorithm);
+                break;
+            }
+            case 5: {
+                short numberOfUc;
+                cout << "The maximum UC a student can be simultaneous is 7. Choose the minimum number of UC the student is enrolled: ";
+                string input;
+                cin >> input;
+                numberOfUc = singleNumberRequest(input);
+                showStudentsIn_n_uc(numberOfUc, Display::sortAlgorithm);
+                break;
+            }
+            ///< Needs to receive a number between 1 and 3
+            case 6: {
+                cout << "Choose a year (1<= year <= 3): ";
+                string input;
+                short year;
+                while(true){
+                    cin >> input;
+                    year = singleNumberRequest(input);
+                    if(year >= 1 and year <= 3) break;
+                    else cout << "Choose a number from 1 to 3: ";
+                }
+                showStudentsPerYear(year, Display::sortAlgorithm);
+                break;
+            }
+            ///< Needs to receive a number between 1 and 4
+            case 7: {
+                display.sortOptions();
+                string input;
+                while(true){
+                    cin >> input;
+                    int temp = singleNumberRequest(input);
+                    if(temp >= 1 and temp<= 4){
+                        Display::sortAlgorithm = temp - 1;
+                        break;
+                    }
+                    else cout << "Invalid number. Enter a new one from 1 to 4: ";
+                }
+                break;
+            }
+            case 8: {
+                return;
+            }
+        }
+        waitingState();
+    }
+}
+
+int App::convertStringToClassId(std::string& s) const{
     if(s.size() != 7){
         cout  << s << " is not a valid Class.\n";
     }
     if(s[0] >= '1' and s[0] <= '3' and (s[1] == 'L' or s[1] == 'l') and (s[2] == 'E' or s[2] == 'e') and
       (s[3] == 'I' or s[3] == 'i') and (s[4] == 'C' or s[4] == 'c') and (s[5] >= '0' and s[5] <= '1') and
       (s[6] >= '0' and s[6] <= '9')) return (s[0] - '0') * 100 + (s[5] - '0') * 10 + (s[6] - '0');
+    return -1;
+}
+
+short App::convertStringToUcId(std::string& s) const{
+    if(s.size() == 8){
+        if((s[0] == 'L' or s[0] == 'l') and (s[1] == '.') and (s[2] == 'E' or s[2] == 'e') and
+           (s[3] == 'I' or s[3] == 'i') and (s[4] == 'C' or s[4] == 'c') and (s[5] == '0') and
+           (s[6] >= '0' or s[6] <= '2') and (s[7] >= '0' or s[7] <= '5')) return (s[6] - '0') * 10 + (s[7] - '0');
+    }
+    if(s.size() == 5){
+        if((s[0] == 'U' or s[0] == 'u') and (s[1] == 'P' or s[1] == 'p') and (s[2] == '0') and
+           (s[3] == '0') and (s[4] == '1')) return 100 + (s[4] - '0');
+    }
     return -1;
 }
 
@@ -290,7 +415,7 @@ void App::copySetOfStudentsToVector(const std::set<Student> &s, std::vector<Stud
     for(const Student& x : s) v.push_back(x);
 }
 
-void App::showStudentSchedule(int upNumber){
+void App::showStudentSchedule(int upNumber) const{
     set<Student>::iterator itr = students.find(upNumber);
     if(itr == students.end()){
         cout << "The up number " << upNumber << ", is not valid.\n";
@@ -299,23 +424,26 @@ void App::showStudentSchedule(int upNumber){
     itr->showSchedule(vClass1, vClass2, vClass3);
 }
 
-
-
-void App::showStudentsPerYear(short year) const{
+void App::showStudentsPerYear(short year, short sortAlgorithm) const{
+    vector<Student> vStudents;
     switch(year){
         case 1:
             for(const Student& x : students)
-                if(x.belongToYear(year)) x.showStudentData();
+                if(x.belongToYear(year + '0')) vStudents.push_back(x);
             break;
         case 2:
             for(const Student& x : students)
-                if(x.belongToYear(year)) x.showStudentData();
+                if(x.belongToYear(year + '0')) vStudents.push_back(x);
             break;
         case 3:
             for(const Student& x : students)
-                if(x.belongToYear(year)) x.showStudentData();
+                if(x.belongToYear(year + '0')) vStudents.push_back(x);
             break;
     }
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
 }
 
 void App::sortByName(std::vector<Student> &v) const{
@@ -326,55 +454,58 @@ void App::sortByName(std::vector<Student> &v) const{
     sort(v.begin(), v.end(), comp);
 }
 
-void App::showStudentsPerYearByName(short year) const{
-    vector<Student> orderedByName;
-    switch(year){
-        case 1:
-            for(const Student& x : students)
-                if(x.belongToYear(year)) orderedByName.push_back(x);
-            break;
-        case 2:
-            for(const Student& x : students)
-                if(x.belongToYear(year)) orderedByName.push_back(x);
-            break;
-        case 3:
-            for(const Student& x : students)
-                if(x.belongToYear(year)) orderedByName.push_back(x);
-            break;
-    }
-    sortByName(orderedByName);
-    for(const Student& x : orderedByName) x.showStudentData();
-}
-
-void App::showStudentsPerClass(int classId) const{
+void App::showStudentsPerClass(int classId, short sortAlgorithm) const{
     int year = classId/100, number = classId%100;
     cout << "Class: " << year << "LEIC" << setw(2) << setfill('0') << number << '\n';
-
-    if(year == '1') vClass1[number-1].showStudents(students);
-    else if(year == '2') vClass2[number-1].showStudents(students);
-    else vClass3[number-1].showStudents(students);
-}
-
-void App::showStudentsPerUc(short ucId) const{
-    cout << (ucId < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << ucId%100 << '\n';
-    set<int> ucStudents;
-
-    if(ucId < 100) ucStudents = vUc[ucId%100-1].getStudents();
-    else ucStudents = vUp[ucId%100-1].getStudents();
-
-    vector<Student> orderedByName;
-    copySetOfIntToVector(ucStudents, orderedByName);
-    sortByName(orderedByName);
-    for(const Student& x : orderedByName) x.showStudentData();
-}
-
-void App::showStudentsIn_n_uc(int numberOfUc) const{
-    vector<Student> orderedByName;
-    copySetOfStudentsToVector(students, orderedByName);
-    sortByName(orderedByName);
-    for(const Student& x : orderedByName){
-        if(x.getNumberOfUc() >= numberOfUc) x.showStudentData();
+    set<int> sStudents;
+    vector<Student> vStudents;
+    if(year == '1') sStudents = vClass1[number-1].getStudents();
+    else if(year == '2') sStudents = vClass2[number-1].getStudents();
+    else sStudents = vClass3[number-1].getStudents();
+    copySetOfIntToVector(sStudents, vStudents);
+    if(vStudents.size() == 0){
+        cout << "There is no student.\n";
+        return;
     }
+
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
+}
+
+void App::showStudentsPerUc(short ucId, short sortAlgorithm) const{
+    cout << (ucId < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << ucId%100 << '\n';
+    set<int> sStudents;
+
+    if(ucId < 100) sStudents = vUc[ucId%100-1].getStudents();
+    else sStudents = vUp[ucId%100-1].getStudents();
+    vector<Student> vStudents;
+    copySetOfIntToVector(sStudents, vStudents);
+    if(vStudents.size() == 0){
+        cout << "There is no student.\n";
+        return;
+    }
+
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
+}
+
+void App::showStudentsIn_n_uc(int numberOfUc, short sortAlgorithm) const{
+    vector<Student> vStudents;
+    for(const Student& x : students){
+        if(x.getNumberOfUc() >= numberOfUc) vStudents.push_back(x);
+    }
+    if(vStudents.size() == 0){
+        cout << "There is no student.\n";
+        return;
+    }
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
 }
 
 void App::showClassFromUc(short ucId) const{
@@ -396,20 +527,6 @@ void App::showUcFromClass(int classId) const{
     }
 }
 
-void App::showStudentsPerClassByName(int classId) const{
-    switch (classId / 100){
-        case 1:
-            vClass1[classId%100 - 1].showStudentsOrderedByName(students);
-            break;
-        case 2:
-            vClass2[classId%100 - 1].showStudentsOrderedByName(students);
-            break;
-        case 3:
-            vClass3[classId%100 - 1].showStudentsOrderedByName(students);
-            break;
-    }
-}
-
 int App::getNumberOfStudentsInClass(int classId) const{
     switch (classId / 100){
         case 1:
@@ -422,7 +539,7 @@ int App::getNumberOfStudentsInClass(int classId) const{
     return -1;
 }
 
-void App::studentsPerClassPerUc(int classId, short ucId) const{
+void App::showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm) const{
     set<int> studentsFromClass;
     switch (classId / 100){
         case 1:
@@ -442,14 +559,19 @@ void App::studentsPerClassPerUc(int classId, short ucId) const{
     set_intersection(studentsFromClass.begin(), studentsFromClass.end(),
                      studentsFromUc.begin(), studentsFromUc.end(),
                      std::back_inserter(common));
-    vector<Student> temp;
+    vector<Student> vStudents;
     for(int x : common){
         auto itr = students.find(x);
-        if((itr->class_uc(classId, ucId))) temp.push_back(*itr);
+        if((itr->class_uc(classId, ucId))) vStudents.push_back(*itr);
     }
-    sortByName(temp);
-    for(auto x : temp) x.showStudentData();
-    cout << temp.size() << ": ";
+    if(vStudents.size() == 0){
+        cout << "There is no student.\n";
+        return;
+    }
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
 }
 
 void App::showClassSchedule(int classId) const{
@@ -466,6 +588,36 @@ void App::showClassSchedule(int classId) const{
     }
 }
 
+void App::showUcSchedule(short ucId) const{
+    if(ucId > 100) vUp[ucId%100 - 1].showSchedule(vClass1, vClass2, vClass3);
+    else vUc[ucId%100 - 1].showSchedule(vClass1, vClass2, vClass3);
+}
+
 void App::showUcWithGreaterOccupation(int n) const{
 
+}
+
+void App::showStudents(const std::vector<Student> &v) const{
+    for(const Student& x : v) x.showStudentData();
+}
+
+void App::reverseShowSudents(const std::vector<Student> &v) const{
+    auto itr = v.end() - 1;
+    for(auto itr = v.end() - 1; itr >= v.begin(); itr--){
+        itr->showStudentData();
+    }
+}
+
+void App::showAllStudents(short sortAlgorithm) const{
+    vector<Student> vStudents;
+    copySetOfStudentsToVector(students, vStudents);
+    if(vStudents.size() == 0){
+        cout << "There is no student.\n";
+        return;
+    }
+
+    if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
+
+    if(sortAlgorithm == 0 or sortAlgorithm == 2) showStudents(vStudents);
+    else reverseShowSudents(vStudents);
 }

@@ -12,6 +12,7 @@ class Request;
 #include <set>
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 #include "Uc.h"
 #include "Request.h"
 #include "Display.h"
@@ -34,7 +35,7 @@ private:
     std::vector<Class> vClass3; ///< stores all the classes from the third year
     std::set<Student> students; ///< stores all students
     Request requests;
-    Display display;
+    Display display; ///< it allows to call function that print useful information on console
     /**
      * @brief receives a Students vector and orders that same vector by student's name
      *
@@ -58,12 +59,39 @@ private:
     /**
      * @brief Check if the given class is valid and return the id of the class as an integer if exists or -1 otherwise.
      *
-     * @param s
+     * @param s String that represents the class.
      * @return Return an integer representing the id of the class or -1 if class does not exist.
      */
     int convertStringToClassId(std::string& s) const;
+    /**
+     * @brief Check if the given UC is valid and return the id of the UC as an short if exists or -1 otherwise.
+     *
+     * @param s String that represents the UC.
+     * @return Return an integer representing the id of the UC or -1 if UC does not exist.
+     */
+    short convertStringToUcId(std::string& s) const;
+    /**
+     * @brief Display the students within a vector
+     *
+     * Displays a vector that is already ordered according to the user's need.
+     *
+     * @param v Vector to be displayed
+     */
+    void showStudents(const std::vector<Student>& v) const;
+    /**
+     * @brief Display the students within a vector
+     *
+     * Displays, in reverse, a vector that is already ordered according to the user's need.
+     *
+     * @param v Vector to be displayed
+     */
+    void reverseShowSudents(const std::vector<Student>& v) const;
 
 public:
+    /**
+     * @brief Is responsible for calling the functions that are going to read the files.
+     */
+    void openFiles();
     /**
      * @brief Treats the information related to classes and University Courses (UC).
      *
@@ -89,16 +117,84 @@ public:
      * @brief Processes information regarding students.
      *
      * This function reads information line by line from the given file. Each line contains a student ID, their
-     * name, and the UC/Class they are enrolled in. It processes this information to update records related to
+     * name, and the respective UC/Class they are enrolled in. It processes this information to update records related to
      * students and some other data structures used.
      *
      * @param file An input file stream containing data representing student.
      */
     void read_students(std::ifstream& file);
-
+    /**
+     * @brief Responsible for starting the execution of the API.
+     *
+     * This function is going to call the function that read files and the ones that interact with the user.
+     */
     void inicialize();
-    void showSchedules();
-    void openFiles();
+    /**
+     * @brief Responsible for display all the possible schedules.
+     *
+     * This function receives an input from the user and from there displays the schedule requested by the user.
+     */
+    void showSchedules() const;
+    /**
+     * @brief Responsible for display the occupation of the user request.
+     *
+     * This function receives an input from the user anf from there displays the occupation requested by the user.
+     */
+    void showOccupation() const;
+    /**
+     * @brief Transforms a class input in a class ID.
+     *
+     * This function receives a class (yLEICxx) and return an ID corresponding to that class.
+     * This function is case insensitive and verifies if the input is valid.
+     *
+     * @return Returns a integer thar corresponds to a valid class ID.
+     */
+    int classIdRequest() const;
+    /**
+     * @brief Transforms a UC input in a UC ID.
+     *
+     * This function receives a UC (L.EICxxx/UPxxx) and return an ID corresponding to that UC.
+     * This function is case insensitive and verifies if the input is valid.
+     *
+     * @return Returns a short thar corresponds to a valid UC ID.
+     */
+    short ucIdRequest() const;
+    /**
+     * @brief Transforms a UP number request in a UP number.
+     *
+     * This function receives a UP number(xxxxxxxx) corresponding to a student and return that same UP number.
+     * This function is case insensitive and verifies if the input is valid.
+     *
+     * @return Returns a integer that corresponds to a student UP number.
+     */
+    int studentUpRequest() const;
+    /**
+     * @brief Transforms a UC and class input in a UC and class ID.
+     *
+     * This function uses the 'ucIdRequest' and 'classIdRequest' to receive both inputs.
+     * This function is case insensitive and verifies if the input is valid.
+     *
+     * @return Returns a pair of numbers where the first is a class ID and the second one is a UC ID.
+     */
+    std::pair<int, short> class_ucRequest() const;
+    /**
+     * @brief Transforms the user input in a number.
+     *
+     * This function receives a user input as a string and verifies if it can be converted to a number from 1 to 9.
+     * If it is not possible, then it will request a new input until it is able to convert to a number.
+     *
+     * @param s String corresponding to the user input.
+     * @return Returns a number between 1 and 9.
+     */
+    short singleNumberRequest(std::string& s) const;
+    /**
+     * @brief Stops displaying new things until the user press 'y'.
+     *
+     * This function purpose is to be used in a situation where it's suppose to stop displaying new information until user says otherwise.
+     *
+     * @return Return a boolean value indicating if the user wants to continue the execution.
+     */
+    bool waitingState() const;
     /**
      * @brief Displays the schedule of a given student.
      *
@@ -107,40 +203,35 @@ public:
      *
      * @param upNumber The student's ID to retrieve and display their schedule.
      */
-    void showStudentSchedule(int upNumber);
+    void showStudentSchedule(int upNumber) const;
     /**
      * @brief Displays the list of students belonging to a specific year.
      *
-     * This method presents a list of students enrolled in a particular year.
+     * This method presents a list of students enrolled in a particular academic year, ordered according to the user's choice.
+     * Sorting options are based on the 'sortAlgorithm' parameter:
+     * - If 'sortAlgorithm' is 1, then is sorted by student UP number in ascending order.
+     * - If 'sortAlgorithm' is 2, then is sorted by student UP number in descending order.
+     * - If 'sortAlgorithm' is 3, then is sorted by student name in ascending order.
+     * - If 'sortAlgorithm' is 4, then is sorted by student name in descending order.
      *
      * @param year The academic year for which the list of students is to be displayed.
+     * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
      */
-    void showStudentsPerYear(short year) const;
-    /**
-     * @brief Displays the list of students belonging to a specific year sorted by name.
-     *
-     * This method presents a sorted list of students enrolled in a particular year, arranged by their names.
-     *
-     * @param year The academic year for which the list of students is to be displayed.
-     */
-    void showStudentsPerYearByName(short year) const;
+    void showStudentsPerYear(short year, short sortAlgotithm) const;
     /**
      * @brief Displays the list of students belonging to a specific class.
      *
-     * This method presents a list of students enrolled in a particular class identified by its ID.
+     * This method presents a list of students enrolled in a particular class, ordered according to the user's choice.
+     * Sorting options are based on the 'sortAlgorithm' parameter:
+     * - If 'sortAlgorithm' is 1, then is sorted by student UP number in ascending order.
+     * - If 'sortAlgorithm' is 2, then is sorted by student UP number in descending order.
+     * - If 'sortAlgorithm' is 3, then is sorted by student name in ascending order.
+     * - If 'sortAlgorithm' is 4, then is sorted by student name in descending order.
      *
-     * @param classId The ID of the class for which the list of students is to be displayed.
+     * @param classId The class ID for which the list of students is to be displayed.
+     * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
      */
-    void showStudentsPerClass(int classId) const;
-    /**
-     * @brief Displays the list of students belonging to a specific class sorted by name.
-     *
-     * This method presents a sorted list of students enrolled in a particular class identified by its ID,
-     * arranged by their names.
-     *
-     * @param classId The ID of the class for which the list of students is to be displayed.
-     */
-    void showStudentsPerClassByName(int classId) const;
+    void showStudentsPerClass(int classId, short sortAlgorithm) const;
     /**
      * @brief Displays the list of students enrolled in a specific UC.
      *
@@ -148,7 +239,7 @@ public:
      *
      * @param ucId The ID of the UC for which the list of students is to be displayed.
      */
-    void showStudentsPerUc(short ucId) const;
+    void showStudentsPerUc(short ucId, short sortAlgorithm) const;
     /**
      * @brief Displays the list of students enrolled in at least a specified number of University Subjects (UC).
      *
@@ -156,7 +247,7 @@ public:
      *
      * @param numberOfUc The minimum number of UC a student must be enrolled in to be included.
      */
-    void showStudentsIn_n_uc(int numberOfUc) const;
+    void showStudentsIn_n_uc(int numberOfUc, short sortAlgorithm) const;
     /**
      * @brief Displays the classes associated with a specific UC.
      *
@@ -180,12 +271,38 @@ public:
      * @return The number of students in the class.
      */
     int getNumberOfStudentsInClass(int classId) const;
-
-    void studentsPerClassPerUc(int classId, short ucId) const;
-
+    /**
+     * @brief Displays all students from the course LEIC.
+     *
+     * @param sortAlgorithm Indicates the order the students are going to be displayed.
+     */
+    void showAllStudents(short sortAlgorithm) const;
+    /**
+     * @brief Displays all student that are simultaneous in a class and UC.
+     *
+     * @param classId Identifies the class.
+     * @param ucId Identifies the UC.
+     * @param sortAlgorithm Indicates the order the students are going to be displayed.
+     */
+    void showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm) const;
+    /**
+     * @brief Displays the students that are enrolled in at least n UC.
+     *
+     * @param n Indicates the minimum number of UC the student must be enrolled.
+     */
     void showUcWithGreaterOccupation(int n) const;
-
+    /**
+     * @brief Displays the schedule of a specific class.
+     *
+     * @param classId Indicates the class.
+     */
     void showClassSchedule(int classId) const;
+    /**
+     * @brief Displays the schedule of a specific class.
+     *
+     * @param ucId Indicates the UC.
+     */
+    void showUcSchedule(short ucId) const;
 };
 
 #endif //AED_PROJECT_APP_H

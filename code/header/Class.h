@@ -34,8 +34,6 @@ public:
     std::set<int> getStudents() const;
     void showAvailableUc() const;
     void addStudent(int up);
-    void showStudents(const std::set<Student>& allStudents) const;
-    void showStudentsOrderedByName(const std::set<Student>& allStudents) const;
 };
 
 #endif //AED_PROJECT_CLASS_H
