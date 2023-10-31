@@ -36,6 +36,7 @@ public:
     std::set<int> getStudents() const;
     void showAvailableUc() const;
     void addStudent(int up);
+    void removeStudent(int up);
 };
 
 #endif //AED_PROJECT_CLASS_H

@@ -18,6 +18,7 @@ public:
     void addStudents(int num);
     void addClass(int c);
     void addStudent(int up);
+    void removeStudent(int up);
     void showSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
 
     void showClassesForUc() const;

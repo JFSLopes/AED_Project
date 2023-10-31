@@ -29,10 +29,16 @@ void App::inicialize(){
 }
 
 int App::studentUpRequest() const{
+    string input;
     int upNumber;
     while (true){
         cout << "Enter student up number: ";
-        cin >> upNumber;
+        cin >> input;
+        if(input.size() == 9) upNumber = stoi(input);
+        else{
+            cout << "Invalid input.\n";
+            continue;
+        }
         if (students.find(upNumber) != students.end()) break;
         else cout << upNumber << " does not exist.\n";
     }
@@ -105,6 +111,44 @@ void App::addUcRequest(){
         requests.addStack(change);
         change.showChange();
     }
+}
+
+void App::removeUcRequest() {
+    int classId;
+    int upNumber = studentUpRequest();
+    showAvailableUc(upNumber);
+    short ucId = ucIdRequest();
+    auto itr = students.find(upNumber);
+    if(itr->checkUc(ucId)){
+        Student student = *itr;
+        classId = student.removeUc(ucId);
+        students.erase(itr);
+        students.insert(student);
+        if(classId != -1){
+            switch (classId / 100){
+                case 1:
+                    vClass1[classId%100 - 1].removeStudent(upNumber);
+                    break;
+                case 2:
+                    vClass2[classId%100 - 1].removeStudent(upNumber);
+                    break;
+                case 3:
+                    vClass3[classId%100 - 1].removeStudent(upNumber);
+                    break;
+            }
+
+        }
+        if(ucId > 100)vUp[ucId%100 - 1].removeStudent(upNumber);
+        else vUc[ucId%100 - 1].removeStudent(upNumber);
+        UcChange change (2, make_pair(0,0), make_pair(classId,ucId));
+        requests.addStack(change);
+        change.showChange();
+
+    }
+    else{
+        cout << "You can't remove an UC you are not enrolled.\n";
+    }
+
 }
 
 bool App::waitingState() const {
@@ -261,30 +305,36 @@ short App::convertStringToUcId(std::string& s) const{
     if(s.size() == 8){
         if((s[0] == 'L' or s[0] == 'l') and (s[1] == '.') and (s[2] == 'E' or s[2] == 'e') and
            (s[3] == 'I' or s[3] == 'i') and (s[4] == 'C' or s[4] == 'c') and (s[5] == '0') and
-           (s[6] >= '0' or s[6] <= '2') and (s[7] >= '0' or s[7] <= '5')) return (s[6] - '0') * 10 + (s[7] - '0');
+           (s[6] >= '0' or s[6] <= '2') and (s[7] >= '0' or s[7] <= '5')){
+            short value = (s[6] - '0') * 10 + (s[7] - '0');
+            if (value > 0) return value;
+        }
     }
     if(s.size() == 5){
         if((s[0] == 'U' or s[0] == 'u') and (s[1] == 'P' or s[1] == 'p') and (s[2] == '0') and
-           (s[3] == '0') and (s[4] == '1')) return 100 + (s[4] - '0');
+           (s[3] == '0') and (s[4] == '1')){
+            short value =  100 + (s[4] - '0');
+            if (value > 0) return value;
+        }
     }
     return -1;
 }
 
 void App::openFiles(){
     string header;
-    std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    std::ifstream file1("/Users/marioaraujo/Desktop/AED_Project/schedule/classes_per_uc.csv");
     if(!file1.is_open()){
         cout << "Invalid name for file with classes and uc\n";
         return;
     }
     std::getline(file1, header);
-    std::ifstream file2("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
+    std::ifstream file2("/Users/marioaraujo/Desktop/AED_Project/schedule/classes.csv");
     if(!file2.is_open()){
         cout << "Invalid name for file with the schedule for a uc in a class\n";
         return;
     }
     std::getline(file2, header);
-    std::ifstream file3("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
+    std::ifstream file3("/Users/marioaraujo/Desktop/AED_Project/schedule/students_classes.csv");
     if(!file3.is_open()){
         cout << "Invalid name for file with students' information\n";
         return;
@@ -690,8 +740,7 @@ void App::ucChangeOperation(){
                 break;
             }
             case 2: {
-                int upNumber = studentUpRequest();
-                short ucId = ucIdRequest();
+                removeUcRequest();
                 break;
             }
             case 3:{
@@ -805,4 +854,20 @@ int App::classWithVacancy(short ucId, int upNumber){
 bool App::conflict(int upNumber, stack<pair<Subject, string>>& s) const{
     auto itr = students.find(upNumber);
     return itr->checkForConflict(s, vClass1, vClass2, vClass3);
+}
+
+void App::showAvailableUc(int upNumber) const {
+    cout << "Choose '1' to check students' UC's or '2' to continue.\n";
+    cout << "[1..2]: ";
+    string input;
+    while(true){
+        cin >> input;
+        short option = singleNumberRequest(input);
+        if(option == 1) {
+            students.find(upNumber)->showAvailableUc();
+            return;
+        }
+        else if(option == 2) return;
+        else cout << "Choose either '1' or '2': ";
+    }
 }

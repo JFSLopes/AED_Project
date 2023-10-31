@@ -58,6 +58,10 @@ void Uc::addStudent(int up){
     students.insert(up);
 }
 
+void Uc::removeStudent(int up) {
+    students.erase(up);
+}
+
 std::set<int> Uc::getStudents() const{
     return students;
 }

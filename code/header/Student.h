@@ -25,6 +25,7 @@ public:
 
     int getUpNumber() const;
     int getNumberOfUc() const;
+    int removeUc(short ucId);
     std::string getName() const;
     std::list<std::pair<int,short>> getList() const;
 
@@ -34,6 +35,7 @@ public:
 
     void showStudentData() const;
     void showSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
+    void showAvailableUc() const;
 
     bool checkForConflict(std::stack<std::pair<Subject,std::string>>& s, const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
     bool belongToYear(char year) const;

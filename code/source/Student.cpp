@@ -106,3 +106,27 @@ bool Student::checkForConflict(std::stack<std::pair<Subject, std::string>> &s, c
     Schedule schedule = calculateSchedule(c1, c2, c3);
     return schedule.conflict(s);
 }
+
+int Student::removeUc(short ucId){
+    ///<Remove UC from schedule
+    pair<int,short> p;
+    for(auto itr = class_Uc.begin(); itr != class_Uc.end(); itr++){
+        if(itr->second == ucId){
+            p = *itr;
+            cout << p.first << ' ' << p.second << ' ' << ucId << endl;
+            class_Uc.erase(itr);
+            break;
+        }
+    }
+    for(auto x : class_Uc) cout << x.first << ' ' << x.second << ' '  << endl;
+    ///< check if there is another UC with the same class removed
+    for(auto itr = class_Uc.begin(); itr != class_Uc.end(); itr++){
+        if(itr->first == p.first) return -1;
+    }
+    return p.first;
+}
+
+void Student::showAvailableUc() const {
+    for(auto x : class_Uc) cout << (x.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x.second%100 << " ";
+    cout << '\n';
+}

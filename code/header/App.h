@@ -283,6 +283,7 @@ public:
      * @param sortAlgorithm Indicates the order the students are going to be displayed.
      */
     void showAllStudents(short sortAlgorithm) const;
+    void showAvailableUc(int upNumber) const;
     /**
      * @brief Displays all student that are simultaneous in a class and UC.
      *
@@ -313,6 +314,7 @@ public:
     bool isPossibleAddClass() const;
     int classWithVacancy(short ucId, int upNumber);
     bool conflict(int upNumber, std::stack<std::pair<Subject, std::string>>& s) const;
+    void removeUcRequest();
 };
 
 #endif //AED_PROJECT_APP_H
