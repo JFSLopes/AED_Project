@@ -71,36 +71,38 @@ bool Schedule::conflict(std::stack<std::pair<Subject,std::string>>& s) const{
         if(s.top().first.getType() != "T") {
             if (s.top().second == "Monday") {
                 for (auto itr = mon.begin(); itr != mon.end(); itr++) {
-                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
-                        and itr->getStartHour() <= s.top().first.getEndHour())
+                    cout << "1: " << s.top().first.getType() << " " << s.top().first.getStartHour() << " " << s.top().first.getEndHour() << endl;
+                    cout << "2: " << itr->getType() << " " << itr->getStartHour() << " " << itr->getEndHour() << endl;
+                    if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
+                       (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;
                 }
             }
             else if(s.top().second == "Tuesday") {
                 for (auto itr = tue.begin(); itr != tue.end(); itr++) {
-                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
-                        and itr->getStartHour() <= s.top().first.getEndHour())
+                    if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
+                        (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;
                 }
             }
             else if(s.top().second == "Wednesday") {
                 for (auto itr = wed.begin(); itr != wed.end(); itr++) {
-                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
-                        and itr->getStartHour() <= s.top().first.getEndHour())
+                    if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
+                        (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;
                 }
             }
             else if(s.top().second == "Thursday") {
                 for (auto itr = thu.begin(); itr != thu.end(); itr++) {
-                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
-                        and itr->getStartHour() <= s.top().first.getEndHour())
+                    if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
+                        (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;
                 }
             }
             else if(s.top().second == "Friday") {
                 for (auto itr = fri.begin(); itr != fri.end(); itr++) {
-                    if (itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour()
-                        and itr->getStartHour() <= s.top().first.getEndHour())
+                    if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
+                        (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;
                 }
             }

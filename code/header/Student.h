@@ -35,6 +35,7 @@ public:
     void showStudentData() const;
     void showSchedule(const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
 
+    bool checkForConflict(std::stack<std::pair<Subject,std::string>>& s, const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const;
     bool belongToYear(char year) const;
     bool class_uc(int classId, short ucId) const;
 

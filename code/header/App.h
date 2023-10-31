@@ -173,6 +173,7 @@ public:
      * @return Returns a integer that corresponds to a student UP number.
      */
     int studentUpRequest() const;
+    void addUcRequest();
     /**
      * @brief Transforms a UC and class input in a UC and class ID.
      *

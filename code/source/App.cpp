@@ -81,6 +81,32 @@ std::pair<int, short> App::class_ucRequest() const{
     return make_pair(classId, ucId);
 }
 
+void App::addUcRequest(){
+    int upNumber = studentUpRequest();
+    short ucId = ucIdRequest();
+    if(isPossibleAddUc(upNumber)){
+        auto itr = students.find(upNumber);
+        if(itr->checkUc(ucId)){
+            cout << "Already enrolled in UC.\n";
+            return;
+        }
+        int classId = classWithVacancy(ucId,upNumber);
+        if(classId == -1){
+            cout << "Either no existing classes with vacancies or there was schedule conflicts.\n";
+            return;
+        }
+        if(ucId > 100) vUp[ucId%100 - 1].addStudent(upNumber);
+        else vUc[ucId%100 - 1].addStudent(upNumber);
+        Student student = *itr;
+        student.setclass_uc(make_pair(classId, ucId));
+        students.erase(itr);
+        students.insert(student);
+        UcChange change (1, make_pair(0,0), make_pair(classId,ucId));
+        requests.addStack(change);
+        change.showChange();
+    }
+}
+
 bool App::waitingState() const {
     char ch;
     while (true) {
@@ -218,11 +244,7 @@ void App::processChange(){
                 cout << "Invalid input.\n";
                 continue;
         }
-        waitingState();
     }
-    // função que pede um up -> studentUpRequest();
-    // função para um UC -> ucIdRequest();
-    // Class -> classIdRequest();
 }
 
 int App::convertStringToClassId(std::string& s) const{
@@ -664,29 +686,7 @@ void App::ucChangeOperation(){
         short option = singleNumberRequest(input);
         switch (option) {
             case 1: {
-                int upNumber = studentUpRequest();
-                short ucId = ucIdRequest();
-                if(isPossibleAddUc(upNumber)){
-                    auto itr = students.find(upNumber);
-                    if(itr->checkUc(ucId)){
-                        cout << "Already enrolled in UC.\n";
-                        break;
-                    }
-                    int classId = classWithVacancy(ucId,upNumber);
-                    if(classId == -1){
-                        cout << "Either no existing classes with vacancies or there was schedule conflicts.\n";
-                        break;
-                    }
-                    if(ucId > 100) vUp[ucId%100 - 1].addStudent(upNumber);
-                    else vUc[ucId%100 - 1].addStudent(upNumber);
-                    Student student = *itr;
-                    student.setclass_uc(make_pair(classId, ucId));
-                    students.erase(itr);
-                    students.insert(student);
-                    UcChange change (1, make_pair(0,0), make_pair(classId,ucId));
-                    requests.addStack(change);
-                    change.showChange();
-                }
+                addUcRequest();
                 break;
             }
             case 2: {
@@ -709,7 +709,6 @@ void App::ucChangeOperation(){
                 continue;
         }
         waitingState();
-
     }
 }
 
@@ -759,44 +758,45 @@ int App::classWithVacancy(short ucId, int upNumber){
     else sClasses = vUp[ucId % 100 - 1].getClasses();
     for(int x : sClasses){
         switch (x / 100){
-            case 1:
+            case 1: {
                 ///< Check if the student can be added to the class
-                if(vClass1[x%100 - 1].isPossibleAddStudent()){
+                if (vClass1[x % 100 - 1].isPossibleAddStudent()) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass1[x%100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(!conflict(upNumber, s)){
-                        cout << "1\n";
-                        cout << upNumber << endl;
-                        vClass1[x%100 - 1].addStudent(upNumber);
+                    vClass1[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if (!conflict(upNumber, s)) {
+                        vClass1[x % 100 - 1].addStudent(upNumber);
+                        return x;
                     }
-                    return x;
                 }
                 break;
-            case 2:
+            }
+            case 2: {
                 ///< Check if the student can be added to the class
-                if(vClass2[x%100 - 1].isPossibleAddStudent()){
+                if (vClass2[x % 100 - 1].isPossibleAddStudent()) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass2[x%100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(!conflict(upNumber, s)){
-                        vClass2[x%100 - 1].addStudent(upNumber);
+                    vClass2[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if (!conflict(upNumber, s)) {
+                        vClass2[x % 100 - 1].addStudent(upNumber);
+                        return x;
                     }
-                    return x;
                 }
                 break;
-            case 3:
+            }
+            case 3: {
                 ///< Check if the student can be added to the class
-                if(vClass3[x%100 - 1].isPossibleAddStudent()){
+                if (vClass3[x % 100 - 1].isPossibleAddStudent()) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass3[x%100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(!conflict(upNumber, s)){
-                        vClass3[x%100 - 1].addStudent(upNumber);
+                    vClass3[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if (!conflict(upNumber, s)) {
+                        vClass3[x % 100 - 1].addStudent(upNumber);
+                        return x;
                     }
-                    return x;
                 }
                 break;
+            }
         }
     }
     return -1;
@@ -804,8 +804,5 @@ int App::classWithVacancy(short ucId, int upNumber){
 
 bool App::conflict(int upNumber, stack<pair<Subject, string>>& s) const{
     auto itr = students.find(upNumber);
-    set<pair<Subject, string>> s1;
-    Schedule schedule;
-    for(auto x : s1) schedule.addSubject(x.first, x.second);
-    return schedule.conflict(s);
+    return itr->checkForConflict(s, vClass1, vClass2, vClass3);
 }

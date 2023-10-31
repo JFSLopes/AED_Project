@@ -101,3 +101,8 @@ bool Student::checkUc(short ucId) const {
 void Student::setclass_uc(std::pair<int, short> l){
     class_Uc.push_back(l);
 }
+
+bool Student::checkForConflict(std::stack<std::pair<Subject, std::string>> &s, const std::vector<Class> &c1, const std::vector<Class> &c2, const std::vector<Class> &c3) const{
+    Schedule schedule = calculateSchedule(c1, c2, c3);
+    return schedule.conflict(s);
+}
