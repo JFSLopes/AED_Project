@@ -24,9 +24,11 @@ public:
     void showClassesForUc() const;
 
     std::set<int> getStudents() const;
+    int numberStudents() const;
+    short getId() const;
     std::set<int> getClasses() const;
 
-
+    friend bool operator<(const Uc& a, const Uc& b);
 };
 
 #endif //AED_PROJECT_UC_H

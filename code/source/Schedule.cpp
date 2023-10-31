@@ -71,8 +71,6 @@ bool Schedule::conflict(std::stack<std::pair<Subject,std::string>>& s) const{
         if(s.top().first.getType() != "T") {
             if (s.top().second == "Monday") {
                 for (auto itr = mon.begin(); itr != mon.end(); itr++) {
-                    cout << "1: " << s.top().first.getType() << " " << s.top().first.getStartHour() << " " << s.top().first.getEndHour() << endl;
-                    cout << "2: " << itr->getType() << " " << itr->getStartHour() << " " << itr->getEndHour() << endl;
                     if ((itr->getType() != "T" and itr->getStartHour() >= s.top().first.getStartHour() and itr->getStartHour() < s.top().first.getEndHour()) or
                        (itr->getType() != "T" and s.top().first.getStartHour() >= itr->getStartHour() and s.top().first.getStartHour() < itr->getEndHour()))
                         return true;

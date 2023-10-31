@@ -28,8 +28,8 @@ class Request;
 class App{
 private:
 
-    std::vector<Uc> vUc; ///< stores all uc's of type L.EICxxx
-    std::vector<Uc> vUp; ///< stores UPxxx uc
+    std::set<Uc> vUc; ///< stores all uc's of type L.EICxxx
+    std::set<Uc> vUp; ///< stores UPxxx uc
     std::vector<Class> vClass1; ///< stores all the classes from the first year
     std::vector<Class> vClass2; ///< stores all the classes from the second year
     std::vector<Class> vClass3; ///< stores all the classes from the third year
@@ -70,6 +70,7 @@ private:
      * @return Return an integer representing the id of the UC or -1 if UC does not exist.
      */
     short convertStringToUcId(std::string& s) const;
+    void showStudents(std::vector<Student>& vStudents, short sortAlgorithm) const;
     /**
      * @brief Display the students within a vector
      *
@@ -77,7 +78,7 @@ private:
      *
      * @param v Vector to be displayed
      */
-    void showStudents(const std::vector<Student>& v) const;
+    void normalShowStudents(const std::vector<Student>& v) const;
     /**
      * @brief Display the students within a vector
      *
@@ -173,6 +174,9 @@ public:
      * @return Returns a integer that corresponds to a student UP number.
      */
     int studentUpRequest() const;
+
+    void studentsIn_n_UC(int numberOfUc, short sortAlgorithm) const;
+
     void addUcRequest();
     /**
      * @brief Transforms a UC and class input in a UC and class ID.
@@ -247,14 +251,6 @@ public:
      */
     void showStudentsPerUc(short ucId, short sortAlgorithm) const;
     /**
-     * @brief Displays the list of students enrolled in at least a specified number of University Subjects (UC).
-     *
-     * This function presents a list of students who are enrolled in a minimum number of UC.
-     *
-     * @param numberOfUc The minimum number of UC a student must be enrolled in to be included.
-     */
-    void showStudentsIn_n_uc(int numberOfUc, short sortAlgorithm) const;
-    /**
      * @brief Displays the classes associated with a specific UC.
      *
      * This function presents a list of classes related to a particular UC identified by its ID.
@@ -315,6 +311,9 @@ public:
     int classWithVacancy(short ucId, int upNumber);
     bool conflict(int upNumber, std::stack<std::pair<Subject, std::string>>& s) const;
     void removeUcRequest();
+    void switchUcRequest();
+    void showUc(short ucId) const;
+    void showClass(int classId) const;
 };
 
 #endif //AED_PROJECT_APP_H

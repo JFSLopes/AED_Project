@@ -70,13 +70,15 @@ Schedule Student::calculateSchedule(const std::vector<Class>& c1, const std::vec
 }
 
 void Student::showSchedule(const std::vector<Class>& c1, const std::vector<Class>& c2, const std::vector<Class>& c3) const{
-    cout << "Aluno: " << name << '\n' << "Número up: " << UPnumber << '\n';
+    cout << "Student: " << name << '\n' << "UP number: " << UPnumber << '\n';
     Schedule schedule = calculateSchedule(c1, c2, c3);
     schedule.print();
 }
 
 void Student::showStudentData() const{
-    cout << name << " ----> " << UPnumber << '\n';
+    // Separator line
+    cout << left << setw(30) << name << std::setw(9) << right << UPnumber << left << '\n';
+    cout << string(39, '-') << '\n';
 }
 
 bool Student::belongToYear(char year) const{
@@ -127,6 +129,6 @@ int Student::removeUc(short ucId){
 }
 
 void Student::showAvailableUc() const {
-    for(auto x : class_Uc) cout << (x.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x.second%100 << " ";
+    for(auto x : class_Uc) cout << (x.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x.second%100 << "   ";
     cout << '\n';
 }

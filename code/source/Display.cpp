@@ -43,8 +43,9 @@ void Display::occupation() const{
          << "\t4. View LEIC occupation\n"
          << "\t5. View occupation of students in at least n UC\n"
          << "\t6. View occupation in a specific year\n"
-         << "\t7. Choose the sort algorithm\n"
-         << "\t8. Return to the previous menu\n";
+         << "\t7. View the n UC with greater occupation\n"
+         << "\t8. Choose the sort algorithm\n"
+         << "\t9. Return to the previous menu\n";
     cout << "[1..8]: ";
 }
 

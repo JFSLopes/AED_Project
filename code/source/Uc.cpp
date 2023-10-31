@@ -69,3 +69,15 @@ std::set<int> Uc::getStudents() const{
 std::set<int> Uc::getClasses() const {
     return classes;
 }
+
+int Uc::numberStudents() const{
+    return (int) students.size();
+}
+
+short Uc::getId() const{
+    return UcIdentifier;
+}
+
+bool operator<(const Uc& a, const Uc& b){
+    return a.UcIdentifier < b.UcIdentifier;
+}
