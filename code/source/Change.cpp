@@ -34,8 +34,8 @@ void UcChange::showChange() const{
 }
 
 
-ClassChange::ClassChange(short operation, std::list<short> allUc, int change, int prev)
-: operation(operation), allUc(allUc), change(change), prev(prev) {}
+ClassChange::ClassChange(short operation, std::list<short> allUc, int prev, int change)
+: operation(operation), allUc(allUc), prev(prev), change(change) {}
 
 void ClassChange::showChange() const{
     cout << "The most recent change has:\n";

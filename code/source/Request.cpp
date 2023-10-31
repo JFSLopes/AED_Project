@@ -8,8 +8,12 @@ bool Request::isEmpty() const {
     return changes.empty();
 }
 
-void Request::pop() {
-    changes.pop();
+void Request::pop(){
+    if(!isEmpty()){
+        std::cout << "Successfully undone the most recent change.\n" ;
+        changes.pop();
+    }
+    else std::cout << "There is not change to be undone.\n";
 }
 
 void Request::showMostRecent() const {
