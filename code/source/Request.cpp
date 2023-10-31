@@ -13,7 +13,7 @@ void Request::pop(){
         std::cout << "Successfully undone the most recent change.\n" ;
         changes.pop();
     }
-    else std::cout << "There is not change to be undone.\n";
+    else std::cout << "There is no change to be undone.\n";
 }
 
 void Request::showMostRecent() const {
