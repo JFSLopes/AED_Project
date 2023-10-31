@@ -7,9 +7,10 @@ void App::inicialize(){
     openFiles();
     display.description();
     while(true){
-        short option;
+        string input;
         display.menu();
-        cin >> option;
+        cin >> input;
+        short option = singleNumberRequest(input);
         switch(option){
             case 1:
                 showSchedules();
@@ -20,12 +21,24 @@ void App::inicialize(){
             case 3:
                 processChange();
                 break;
+            case 4:
+                undoRequest();
+                waitingState();
+                break;
+            case 5:
+                display.description();
+                waitingState();
+                break;
             case 6:
                 return;
             default:
                 cout << "The typed number id not valid.\n";
         }
     }
+}
+
+void App::undoRequest(){
+    requests.pop();
 }
 
 int App::studentUpRequest() const{

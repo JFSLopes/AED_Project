@@ -177,6 +177,8 @@ public:
 
     void studentsIn_n_UC(int numberOfUc, short sortAlgorithm) const;
 
+    void undoRequest();
+
     void addUcRequest();
     /**
      * @brief Transforms a UC and class input in a UC and class ID.
