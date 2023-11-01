@@ -13,13 +13,13 @@
  */
 class Request{
 private:
-    std::stack<Change> changes; ///< Stores all the changes that were successfully done by the user.
+    std::stack<Change*> changes; ///< Stores all the changes that were successfully done by the user.
 public:
     /**
      * @brief This function adds a new change to the stack
      * @param change Change to be added to the stack.
      */
-    void addStack(Change& change);
+    void addStack(Change* change);
     /**
      * @brief Displays a message indicating the most recent change.
      *
@@ -40,6 +40,7 @@ public:
      * It displays a message informing the user about the performed action.
      */
     void pop();
+    Change top() const;
 };
 
 #endif //AED_PROJECT_REQUEST_H

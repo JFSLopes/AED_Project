@@ -38,7 +38,31 @@ void App::inicialize(){
 }
 
 void App::undoRequest(){
-    requests.pop();
+    string input;
+    cout << "Choose '1' to see what the last change was, '2' to continue with the undo process: ";
+    while(true){
+        cin >> input;
+        short option = singleNumberRequest(input);
+        if(option == 1) {
+            requests.showMostRecent();
+            break;
+        }
+        else if(option == 2) break;
+        else cout << "Invalid input. Choose either '1' or '2': ";
+    }
+    cout << "Are you sure you want to undo the change[y/n]: ";
+    while(true){
+        cin >> input;
+        if(input == "y"){
+            requests.pop();
+            break;
+        }
+        else if(input == "n"){
+            cout << "Process was interrupted.\n";
+            return;
+        }
+        else cout << "Invalid input. Choose either 'y' or 'n': ";
+    }
 }
 
 int App::studentUpRequest() const{
@@ -132,9 +156,9 @@ void App::addUcRequest(){
         student.setclass_uc(make_pair(classId, ucId));
         students.erase(itr);
         students.insert(student);
-        UcChange change (1, make_pair(0,0), make_pair(classId,ucId));
+        Change* change = new UcChange(1, make_pair(0,0), make_pair(classId,ucId));
         requests.addStack(change);
-        change.showChange();
+        change->showChange();
     }
 }
 
@@ -177,9 +201,9 @@ void App::removeUcRequest() {
             vUc.erase(ucId);
             vUc.insert(uc);
         }
-        UcChange change (2, make_pair(0,0), make_pair(classId,ucId));
+        Change* change = new UcChange(2, make_pair(0,0), make_pair(classId,ucId));
         requests.addStack(change);
-        change.showChange();
+        change->showChange();
 
     }
     else{
@@ -501,7 +525,6 @@ void App::read_classes(ifstream& in){
     in.close();
 }
 
-
 void App::read_students(ifstream& in){
     string line, prevName, yearsEnrolled;
     bool firstIteration = true;
@@ -574,7 +597,6 @@ void App::read_students(ifstream& in){
                 vUc.erase(itr);
                 vUc.insert(uc);
             }
-            else cout <<"why\n";
         }
         else{
             auto itr = vUp.find(ucId);
@@ -591,11 +613,6 @@ void App::read_students(ifstream& in){
         else if(yearsEnrolled.back() != ('0' + year)) yearsEnrolled += ('0' + year);
 
         class_uc.push_back(make_pair(classId, ucId));
-    }
-    cout << vUc.size();
-    for(auto x : vUc){
-        showUc(x.getId());
-        cout << x.numberStudents() << " ";
     }
     in.close();
 }
@@ -666,8 +683,8 @@ void App::showStudents(std::vector<Student>& vStudents, short sortAlgorithm) con
     }
     if(sortAlgorithm == 2 or sortAlgorithm == 3) sortByName(vStudents);
 
-    cout << left << setw(30) << setfill(' ') << "Name" << setw(9) << setfill(' ') << "ID" << '\n';
-    cout << string(39, '-') << '\n';
+    cout << string(7,' ') << left << setw(30) << setfill(' ') << "Name" << setw(9) << setfill(' ') << "ID" << '\n';
+    cout << string(46, '-') << '\n';
     if(sortAlgorithm == 0 or sortAlgorithm == 2) normalShowStudents(vStudents);
     else reverseShowSudents(vStudents);
 }
@@ -807,7 +824,12 @@ void App::showUcWithGreaterOccupation(int n) const{
 }
 
 void App::normalShowStudents(const std::vector<Student> &v) const{
-    for(const Student& x : v) x.showStudentData();
+    int count = 1;
+    for(const Student& x : v) {
+        cout << right << setw(3) << setfill(' ') << count << ":";
+        count++;
+        x.showStudentData();
+    }
 }
 
 void App::reverseShowSudents(const std::vector<Student> &v) const{
@@ -845,41 +867,6 @@ void App::ucChangeOperation(){
                 short ucId = ucIdRequest();
                 cout << "Choose the one to be added. ";
                 short ucId1 = ucIdRequest();
-                break;
-            }
-            case 4:
-                return;
-            default:
-                cout << "Invalid input.\n";
-                continue;
-        }
-        waitingState();
-    }
-}
-
-void App::classChangeOperation(){
-    while (true){
-        string input;
-        display.showchangeoptions(1);
-        cin >> input;
-        short option = singleNumberRequest(input);
-        switch (option) {
-            case 1: {
-                int upNumber = studentUpRequest();
-                int classId = classIdRequest();
-                break;
-            }
-            case 2: {
-                int upNumber = studentUpRequest();
-                int classId = classIdRequest();
-                break;
-            }
-            case 3:{
-                int upNumber = studentUpRequest();
-                cout << "Choose the one to be removed. ";
-                int classId = classIdRequest();
-                cout << "Choose the one to be added. ";
-                int classId1 = classIdRequest();
                 break;
             }
             case 4:
@@ -969,9 +956,44 @@ void App::showAvailableUc(int upNumber) const {
 }
 
 void App::showUc(short ucId) const{
-    cout << (ucId < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << ucId%100;
+    cout << right <<(ucId < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << ucId%100;
 }
 
 void App::showClass(int classId) const{
-    cout << "Class: " << classId/100 << "LEIC" << setw(2) << setfill('0') << classId%100;
+    cout << "Class: " << classId/100 << "LEIC" << right << setw(2) << setfill('0') << classId%100;
+}
+
+void App::classChangeOperation(){
+    while (true){
+        string input;
+        display.showchangeoptions(1);
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option) {
+            case 1: {
+                int upNumber = studentUpRequest();
+                int classId = classIdRequest();
+                break;
+            }
+            case 2: {
+                int upNumber = studentUpRequest();
+                int classId = classIdRequest();
+                break;
+            }
+            case 3:{
+                int upNumber = studentUpRequest();
+                cout << "Choose the one to be removed. ";
+                int classId = classIdRequest();
+                cout << "Choose the one to be added. ";
+                int classId1 = classIdRequest();
+                break;
+            }
+            case 4:
+                return;
+            default:
+                cout << "Invalid input.\n";
+                continue;
+        }
+        waitingState();
+    }
 }

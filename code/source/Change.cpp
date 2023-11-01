@@ -3,7 +3,7 @@
 using namespace std;
 
 void Change::showChange() const {
-    cout << "ok";
+    cout << "";
 }
 
 

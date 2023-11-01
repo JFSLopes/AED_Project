@@ -76,9 +76,8 @@ void Student::showSchedule(const std::vector<Class>& c1, const std::vector<Class
 }
 
 void Student::showStudentData() const{
-    // Separator line
-    cout << left << setw(30) << name << std::setw(9) << right << UPnumber << left << '\n';
-    cout << string(39, '-') << '\n';
+    cout << string(3, ' ') << left << setw(30) << name << std::setw(9) << right << UPnumber << left << '\n';
+    cout << string(46, '-') << '\n';
 }
 
 bool Student::belongToYear(char year) const{

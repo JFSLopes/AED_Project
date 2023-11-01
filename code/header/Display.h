@@ -26,18 +26,6 @@ public:
 
 
 
-    void classOcc() const;
-    void ucOcc() const;
-    void class_uc() const;
-    void course() const;
-    void nUc() const;
-    void greaterOcc() const;
-    
-    void classChange() const;
-    void UcChange() const;
-
-    void undo() const;
-
 };
 
 #endif //AED_PROJECT_DISPLAY_H
