@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace std;
 
+App::App() : ucPerYear(vector<vector<short>>(3)), classPerYear(vector<set<int>>(3)) {}
+
 void App::inicialize(){
     openFiles();
     display.description();
@@ -13,21 +15,26 @@ void App::inicialize(){
         short option = singleNumberRequest(input);
         switch(option){
             case 1:
+                cout << '\n';
                 showSchedules();
                 break;
             case 2:
+                cout << '\n';
                 showOccupation();
                 break;
             case 3:
+                cout << '\n';
                 processChange();
                 break;
             case 4:
+                cout << '\n';
                 undoRequest();
                 waitingState();
                 break;
             case 5:
                 display.description();
                 waitingState();
+                cout << '\n';
                 break;
             case 6:
                 return;
@@ -249,7 +256,9 @@ void App::showSchedules() const{
                 cout << "The typed number id not valid.\n";
                 continue;
         }
+        cout << '\n';
         waitingState();
+        cout << '\n';
     }
 }
 
@@ -262,7 +271,7 @@ void App::showOccupation() const{
         switch (option){
             case 1: {
                 int classId = classIdRequest();
-                showStudentsPerClass(classId, Display::sortAlgorithm);
+                showStudentsPerClass(classId, Display::sortAlgorithm, true);
                 break;
             }
             case 2: {
@@ -423,29 +432,34 @@ void App::openFiles(){
 void App::read_classes_per_uc(ifstream& in){
     string line;
     while(getline(in, line)){
+        short ucId;
         if(line[0] == 'L'){
-            int temp = stoi(line.substr(5,3));
-            if(vUc.find(temp) == vUc.end()) vUc.insert(Uc(temp));
+            ucId = stoi(line.substr(5,3));
+            if(vUc.find(ucId) == vUc.end()) vUc.insert(Uc(ucId));
         }
         else if(line[0] == 'U'){
-            int temp = stoi(line.substr(2,3));
+            ucId = stoi(line.substr(2,3));
             ///< Adds a factor of 100 to differentiate L.EIC001 from UP001
-            if(vUp.find(temp) == vUp.end()) vUp.insert(Uc(temp+100));
+            if(vUp.find(ucId) == vUp.end()) vUp.insert(Uc(ucId+100));
         }
         int pos = line.find(',') + 1;
-        int classNumber = stoi(line.substr(pos + 5,2));
+        int classId = 100 * (line[pos] - '0') + stoi(line.substr(pos + 5,2));
         ///< Constructs a new Class object if it isn't already there
         switch(line[pos]){
             case '1':
-                if(vClass1.size() < classNumber) vClass1.push_back(Class());
+                if(vClass1.size() < classId) vClass1.push_back(Class());
                 break;
             case '2':
-                if(vClass2.size() < classNumber) vClass2.push_back(Class());
+                if(vClass2.size() < classId) vClass2.push_back(Class());
                 break;
             case '3':
-                if(vClass3.size() < classNumber) vClass3.push_back(Class());
+                if(vClass3.size() < classId) vClass3.push_back(Class());
                 break;
         }
+        bool alreadyAdded = binary_search(ucPerYear[classId/100 - 1].begin(), ucPerYear[classId/100 - 1].end(), ucId);
+        if(!alreadyAdded) ucPerYear[classId/100 - 1].push_back(ucId);
+        alreadyAdded = classPerYear[classId/100 - 1].find(ucId) != classPerYear[classId/100 - 1].end();
+        if(!alreadyAdded) classPerYear[classId/100 - 1].insert(classId);
     }
     in.close();
 }
@@ -652,7 +666,33 @@ void App::showStudentsPerYear(short year, short sortAlgorithm) const{
                 if(x.belongToYear(year + '0')) vStudents.push_back(x);
             break;
     }
-    showStudents(vStudents, sortAlgorithm);
+    cout << "\t\t YEAR " << year << " {" << vStudents.size() << "}\n";
+    string input;
+    display.yearDisplayOptions();
+    while(true){
+        cin >> input;
+        short option = singleNumberRequest(input);
+        if(option == 1){
+            for(short ucId : ucPerYear[year-1]) showStudentsPerUc(ucId, sortAlgorithm);
+            break;
+        }
+        else if(option == 2){
+            for(int classId : classPerYear[year-1]) showStudentsPerClass(classId, sortAlgorithm, false);
+            break;
+        }
+        else if(option == 3){
+            for(int classId : classPerYear[year-1]){
+                cout << "\t\t\t\t"; showClass(classId); cout << "\n\n";
+                for(short ucId : ucPerYear[year-1]) showStudentsPerClassPerUc(classId, ucId, sortAlgorithm);
+            }
+            break;
+        }
+        else if(option == 4){
+            showStudents(vStudents, sortAlgorithm);
+            break;
+        }
+        else cout << "Invalid input. The number must be between 1 and 4: ";
+    }
 }
 
 void App::sortByName(std::vector<Student> &v) const{
@@ -663,16 +703,50 @@ void App::sortByName(std::vector<Student> &v) const{
     sort(v.begin(), v.end(), comp);
 }
 
-void App::showStudentsPerClass(int classId, short sortAlgorithm) const{
-    showClass(classId);
-    cout << '\n';
+void App::showStudentsPerClass(int classId, short sortAlgorithm, bool calledDirectly) const{
+    showClass(classId); cout << " {";
+    if(classId/100 == 1) cout << vClass1[classId%100 - 1].getNumberOfStudents();
+    else if(classId/100 == 2) cout << vClass2[classId%100 - 1].getNumberOfStudents();
+    else cout << vClass3[classId%100 - 1].getNumberOfStudents();
+    cout << "}\n";
+
+    ///< Check if user wants to see it organize by UC, only comes here if this method was called directly
+    bool seeByUc = false;
+    if(calledDirectly){
+        string input;
+        cout << "Want to see the students organize by the UC of this class or not [y/n]: ";
+        while(true) {
+            cin >> input;
+            if(input == "y") seeByUc = true;
+            else if(input == "n") seeByUc = false;
+            else{
+                cout << "Invalid input. Choose 'y' or 'n': ";
+                continue;
+            }
+            break;
+        }
+    }
     set<int> sStudents;
+    set<short> allUc;
     vector<Student> vStudents;
-    if(classId/100 == 1) sStudents = vClass1[classId%100 - 1].getStudents();
-    else if(classId/100 == 2) sStudents = vClass2[classId%100 - 1].getStudents();
-    else sStudents = vClass3[classId%100 - 1].getStudents();
+    if(classId/100 == 1){
+        sStudents = vClass1[classId%100 - 1].getStudents();
+        allUc = vClass1[classId%100 - 1].getUc();
+    }
+    else if(classId/100 == 2){
+        sStudents = vClass2[classId%100 - 1].getStudents();
+        allUc = vClass2[classId%100 - 1].getUc();
+    }
+    else{
+        sStudents = vClass3[classId%100 - 1].getStudents();
+        allUc = vClass3[classId%100 - 1].getUc();
+    }
     copySetOfIntToVector(sStudents, vStudents);
 
+    if(seeByUc){
+        for(short x : allUc) showStudentsPerClassPerUc(classId,x, sortAlgorithm);
+        return;
+    }
     showStudents(vStudents, sortAlgorithm);
 }
 
@@ -687,6 +761,7 @@ void App::showStudents(std::vector<Student>& vStudents, short sortAlgorithm) con
     cout << string(46, '-') << '\n';
     if(sortAlgorithm == 0 or sortAlgorithm == 2) normalShowStudents(vStudents);
     else reverseShowSudents(vStudents);
+    cout << '\n';
 }
 
 void App::showStudentsPerUc(short ucId, short sortAlgorithm) const{
@@ -778,8 +853,11 @@ void App::showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm
         auto itr = students.find(x);
         if((itr->class_uc(classId, ucId))) vStudents.push_back(*itr);
     }
-
+    cout << "\t\t\t\t"; showUc(ucId);
+    if(ucId > 100) cout << " {" << vStudents.size() << "}\n";
+    else cout << " {" << vStudents.size() << "}\n";
     showStudents(vStudents, sortAlgorithm);
+    cout << '\n';
 }
 
 void App::showClassSchedule(int classId) const{

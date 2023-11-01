@@ -24,7 +24,7 @@ public:
 
     void showchangeoptions(short type) const;
 
-
+    void yearDisplayOptions() const;
 
 };
 

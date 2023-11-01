@@ -24,16 +24,21 @@ void Schedule::addSubject(Subject &subject, string day){
 }
 
 void Schedule::print() const{
-    cout << "Monday\n";
+    cout << "\nMonday\n";
     for(const Subject& x : mon) x.show();
-    cout << "Tuesday\n";
+    if(mon.size() == 0) cout << "/*******************/\n";
+    cout << "\nTuesday\n";
     for(const Subject& x : tue) x.show();
-    cout << "Wednesday\n";
+    if(tue.size() == 0) cout << "/*******************/\n";
+    cout << "\nWednesday\n";
     for(const Subject& x : wed) x.show();
-    cout << "Thursday\n";
+    if(wed.size() == 0) cout << "/*******************/\n";
+    cout << "\nThursday\n";
     for(const Subject& x : thu) x.show();
-    cout << "Friday\n";
+    if(thu.size() == 0) cout << "/*******************/\n";
+    cout << "\nFriday\n";
     for(const Subject& x : fri) x.show();
+    if(fri.size() == 0) cout << "/*******************/\n";
 }
 
 void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s) const{
@@ -108,4 +113,14 @@ bool Schedule::conflict(std::stack<std::pair<Subject,std::string>>& s) const{
         s.pop();
     }
     return false;
+}
+
+std::set<short> Schedule::getAllUc() const{
+    set<short> s;
+    for(auto x : mon) s.insert(x.getUcNumber());
+    for(auto x : tue) s.insert(x.getUcNumber());
+    for(auto x : wed) s.insert(x.getUcNumber());
+    for(auto x : thu) s.insert(x.getUcNumber());
+    for(auto x : fri) s.insert(x.getUcNumber());
+    return s;
 }

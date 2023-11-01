@@ -4,6 +4,7 @@
 #include <string>
 #include <stack>
 #include <iomanip>
+#include <sstream>
 #include <iostream>
 
 class Subject{

@@ -70,7 +70,7 @@ Schedule Student::calculateSchedule(const std::vector<Class>& c1, const std::vec
 }
 
 void Student::showSchedule(const std::vector<Class>& c1, const std::vector<Class>& c2, const std::vector<Class>& c3) const{
-    cout << "Student: " << name << '\n' << "UP number: " << UPnumber << '\n';
+    cout << "\n\t\t\tStudent: " << name << '\n' << "\t\t\tUP number: " << UPnumber << '\n';
     Schedule schedule = calculateSchedule(c1, c2, c3);
     schedule.print();
 }

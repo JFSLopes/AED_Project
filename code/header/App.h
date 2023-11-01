@@ -30,6 +30,8 @@ private:
 
     std::set<Uc> vUc; ///< stores all uc's of type L.EICxxx
     std::set<Uc> vUp; ///< stores UPxxx uc
+    std::vector<std::vector<short>> ucPerYear; ///< Each position stores the ucId's of each year
+    std::vector<std::set<int>> classPerYear; ///< Each position stores classId's of each year
     std::vector<Class> vClass1; ///< stores all the classes from the first year
     std::vector<Class> vClass2; ///< stores all the classes from the second year
     std::vector<Class> vClass3; ///< stores all the classes from the third year
@@ -89,6 +91,7 @@ private:
     void reverseShowSudents(const std::vector<Student>& v) const;
 
 public:
+    App();
     /**
      * @brief Is responsible for calling the functions that are going to read the files.
      */
@@ -242,8 +245,9 @@ public:
      *
      * @param classId The class ID for which the list of students is to be displayed.
      * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
+     * @param calledDirectly Indicates if the method needs to show the option to the user.
      */
-    void showStudentsPerClass(int classId, short sortAlgorithm) const;
+    void showStudentsPerClass(int classId, short sortAlgorithm, bool calledDirectly) const;
     /**
      * @brief Displays the list of students enrolled in a specific UC.
      *

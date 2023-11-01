@@ -12,7 +12,7 @@ void Class::showSchedule() const{
 }
 
 int Class::getNumberOfStudents() const{
-    return students.size();
+    return (int)students.size();
 }
 
 void Class::addStudent(int up){
@@ -52,4 +52,8 @@ bool Class::isPossibleAddStudent() const {
 
 bool Class::isPossibleRemoveStudent() const {
     return getNumberOfStudents() > 0;
+}
+
+std::set<short> Class::getUc() const{
+    return schedule.getAllUc();
 }

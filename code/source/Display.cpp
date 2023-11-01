@@ -46,7 +46,7 @@ void Display::occupation() const{
          << "\t7. View the n UC with greater occupation\n"
          << "\t8. Choose the sort algorithm\n"
          << "\t9. Return to the previous menu\n";
-    cout << "[1..8]: ";
+    cout << "[1..9]: ";
 }
 
 void Display::sortOptions() const{
@@ -81,5 +81,14 @@ void Display::showchangeoptions(short type) const {
              << "\t3. Switch Classes\n"
              << "\t4. Return to the previous menu\n";
     }
+    cout << "[1..4]: ";
+}
+
+void Display::yearDisplayOptions() const{
+    cout << "Choose an option by entering the corresponding number:\n"
+         << "\t1. Show the students in each UC from the chosen year\n"
+         << "\t2. Show the students in each class from the chosen year\n"
+         << "\t3. Show the students in each class per UC from the chosen year\n"
+         << "\t4. Show the students from the chosen year\n";
     cout << "[1..4]: ";
 }
