@@ -26,6 +26,7 @@ public:
 class UcChange : public Change{
 private:
     short operation; ///< 1 to Add, 2 to Remove and 3 to Switch.
+    int upNumber; ///< Stores the students Up.
     std::pair<int, short> prev; ///< Only used in switch and records the class and UC that were switched.
     std::pair<int, short> change; ///< Stores the new class and UC.
 
@@ -39,7 +40,7 @@ public:
      * @param prev Initializes parameter prev, in case of an Add or Remove it is initialize to {0,0}.
      * @param change Initialize parameter change.
      */
-    UcChange(short operation, std::pair<int, short> prev, std::pair<int, short> change);
+    UcChange(short operation, int upNumber, std::pair<int, short> prev, std::pair<int, short> change);
     /**
      * @brief Displays information about the recorded changes.
      *
@@ -51,7 +52,8 @@ public:
 
 class ClassChange : public Change{
 private:
-    short operation; ///< 1 to Add, 2 to Remove and 3 to Switch
+    short operation; ///< 1 to Add, 2 to Remove and 3 to Switch.
+    int upNumber; ///< Stores the students Up.
     std::list<short> allUc; ///< Stores all the UC that were involved in the operation.
     int prev; ///< Only used in switch and stores the class that was switched.
     int change; ///< Stores the new class.
@@ -67,7 +69,7 @@ public:
      * @param change Initializes parameter change.
      * @param prev Initializes parameter prev.
      */
-    ClassChange(short operation, std::list<short> allUc, int prev, int change);
+    ClassChange(short operation, int upNumber, std::list<short> allUc, int prev, int change);
     /**
      * @brief Displays information about the recorded changes.
      *

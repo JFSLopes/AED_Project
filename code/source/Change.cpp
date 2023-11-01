@@ -7,35 +7,36 @@ void Change::showChange() const {
 }
 
 
-UcChange::UcChange(short operation, std::pair<int, short> prev, std::pair<int, short> change)
-: operation(operation), prev(prev), change(change) {}
+UcChange::UcChange(short operation, int upNumber, std::pair<int, short> prev, std::pair<int, short> change)
+: operation(operation), upNumber(upNumber), prev(prev), change(change) {}
 
 void UcChange::showChange() const{
     cout << "The most recent change has:\n";
     switch (operation){
         case 1: {
             cout << "\tAdded UC " << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100;
             break;
         }
         case 2: {
             cout << "\tRemoved UC " << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100;
             break;
         }
         case 3: {
             cout << "\tSwitch UC (" << (prev.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << prev.second % 100
-                 << ") from class (" << prev.first / 100 << "LEIC" << prev.first %100 << ") to UC ("
-                 << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second % 100
-                 << " from class " << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first %100 << '\n';
+                 << ") from class (" << prev.first/100 << "LEIC" << setw(2) << setfill('0') << prev.first %100 << ") to UC ("
+                 << (change.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << change.second%100
+                 << ") from class (" << change.first / 100 << "LEIC" << setw(2) << setfill('0') << change.first%100 << ")";
             break;
         }
     }
+    cout << " for student " << upNumber << '\n';
 }
 
 
-ClassChange::ClassChange(short operation, std::list<short> allUc, int prev, int change)
-: operation(operation), allUc(allUc), prev(prev), change(change) {}
+ClassChange::ClassChange(short operation, int upNumber, std::list<short> allUc, int prev, int change)
+: operation(operation), upNumber(upNumber), allUc(allUc), prev(prev), change(change) {}
 
 void ClassChange::showChange() const{
     cout << "The most recent change has:\n";
@@ -43,20 +44,21 @@ void ClassChange::showChange() const{
         case 1: {
             cout << "\tAdded UC { ";
             for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x << " ";
-            cout << "} from class " << change/100 << "LEIC" << change%100 << '\n';
+            cout << "} from class " << change/100 << "LEIC" << change%100;
             break;
         }
         case 2: {
             cout << "\tRemoved UC { ";
             for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x << " ";
-            cout << "} from class " << change/100 << "LEIC" << change%100 << '\n';
+            cout << "} from class " << change/100 << "LEIC" << change%100;
             break;
         }
         case 3: {
             cout << "\tSwitched UC { ";
             for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x << " ";
-            cout << "} from class " << prev/100 << "LEIC" << prev%100 << "to class " << change/100 << "LEIC" << change%100 << '\n';
+            cout << "} from class " << prev/100 << "LEIC" << prev%100 << "to class " << change/100 << "LEIC" << change%100;
             break;
         }
     }
+    cout << " for student " << upNumber << '\n';
 }

@@ -6,21 +6,25 @@ void Schedule::addSubject(Subject &subject, string day){
     switch(week[day]){
         case 1:
             mon.push_back(subject);
+            mon.sort();
             break;
         case 2:
             tue.push_back(subject);
+            tue.sort();
             break;
         case 3:
             wed.push_back(subject);
+            wed.sort();
             break;
         case 4:
             thu.push_back(subject);
+            thu.sort();
             break;
         case 5:
             fri.push_back(subject);
+            fri.sort();
             break;
     }
-    sortSchedule();
 }
 
 void Schedule::print() const{

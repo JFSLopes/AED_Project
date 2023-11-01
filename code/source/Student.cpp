@@ -93,6 +93,7 @@ bool Student::class_uc(int classId, short ucId) const{
 }
 
 bool Student::checkUc(short ucId) const {
+    if(class_Uc.size() == 0) return false;
     for (auto x : class_Uc) {
         if(x.second == ucId) return true;
     }
