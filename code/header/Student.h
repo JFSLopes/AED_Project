@@ -43,6 +43,7 @@ public:
 
     bool operator==(const Student& student);
     bool checkUc(short ucId) const;
+    int checkClass(int classId) const;
 
 
 };

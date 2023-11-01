@@ -48,6 +48,11 @@ public:
      * the UCs and classes that were involved.
      */
     void showChange() const override;
+    short getOperation() const;
+    int getStudent() const;
+    std::pair<int, short> getPrev() const;
+    std::pair<int, short> getChange() const;
+    void setChange(std::pair<int, short> p);
 };
 
 class ClassChange : public Change{

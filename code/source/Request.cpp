@@ -24,4 +24,8 @@ void Request::showMostRecent() const{
     else std::cout << "There are no changes.\n";
 }
 
+Change* Request::top(){
+    return changes.top();
+}
+
 

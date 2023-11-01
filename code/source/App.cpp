@@ -46,6 +46,10 @@ void App::inicialize(){
 
 void App::undoRequest(){
     string input;
+    if(requests.isEmpty()){
+        cout << "No changes were made.\n";
+        return;
+    }
     cout << "Choose '1' to see what the last change was, '2' to continue with the undo process: ";
     while(true){
         cin >> input;
@@ -61,7 +65,7 @@ void App::undoRequest(){
     while(true){
         cin >> input;
         if(input == "y"){
-            requests.pop();
+            undoChange();
             break;
         }
         else if(input == "n"){
@@ -1199,5 +1203,85 @@ void App::switchUcRequest() {
         requests.addStack(change);
         change->showChange();
     }
+}
+
+void App::undoChange(){
+    UcChange* ptr = dynamic_cast<UcChange*>(requests.top());
+    if(ptr != nullptr){
+        if(ptr->getOperation() == 1) revertUcAdd(ptr);
+        else if(ptr->getOperation() == 2) revertUcRemove(ptr);
+        else{
+            ///< First removes and then add.
+            revertUcAdd(ptr);
+            ///< Needs to change the value on the prev to the change
+            ptr->setChange(ptr->getPrev());
+            revertUcRemove(ptr);
+        }
+        requests.pop();
+    }
+}
+
+void App::revertUcAdd(UcChange *ptr){
+    short ucId = ptr->getChange().second;
+    int classId = ptr->getChange().first;
+    ///< Remove the student from the UC
+    if(ucId > 100){
+        auto itr1 = vUp.find(ucId);
+        Uc uc = *itr1;
+        uc.removeStudent(ptr->getStudent());
+        vUp.erase(itr1);
+        vUp.insert(uc);
+    }
+    else{
+        auto itr1 = vUc.find(ucId);
+        Uc uc = *itr1;
+        uc.removeStudent(ptr->getStudent());
+        vUc.erase(itr1);
+        vUc.insert(uc);
+    }
+    ///< Remove the subject
+    auto itr = students.find(ptr->getStudent());
+    Student student = *itr;
+    student.removeUc(ucId);
+    students.erase(itr);
+    students.insert(student);
+    ///< Remove the student from the class if needed
+    if(students.find(ptr->getStudent())->checkClass(classId) != -1){
+        if(classId/100 == 1) vClass1[classId%100 - 1].removeStudent(ptr->getStudent());
+        else if (classId/100 == 2) vClass2[classId%100 - 1].removeStudent(ptr->getStudent());
+        else vClass3[classId%100 - 1].removeStudent(ptr->getStudent());
+    }
+}
+
+void App::revertUcRemove(UcChange *ptr){
+    short ucId = ptr->getChange().second;
+    int classId = ptr->getChange().first;
+    ///< Add the student to the UC
+    if(ucId > 100){
+        auto itr1 = vUp.find(ucId);
+        Uc uc = *itr1;
+        uc.addStudent(ptr->getStudent());
+        vUp.erase(itr1);
+        vUp.insert(uc);
+    }
+    else{
+        auto itr1 = vUc.find(ucId);
+        Uc uc = *itr1;
+        uc.addStudent(ptr->getStudent());
+        vUc.erase(itr1);
+        vUc.insert(uc);
+    }
+    ///< Add the student to the class if needed
+    if(students.find(ptr->getStudent())->checkClass(classId) != -1){
+        if(classId/100 == 1) vClass1[classId%100 - 1].addStudent(ptr->getStudent());
+        else if (classId/100 == 2) vClass2[classId%100 - 1].addStudent(ptr->getStudent());
+        else vClass3[classId%100 - 1].addStudent(ptr->getStudent());
+    }
+    ///< Add the subject
+    auto itr = students.find(ptr->getStudent());
+    Student student = *itr;
+    student.setclass_uc(ptr->getChange());
+    students.erase(itr);
+    students.insert(student);
 }
 

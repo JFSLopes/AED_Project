@@ -120,10 +120,14 @@ int Student::removeUc(short ucId){
         }
     }
     ///< check if there is another UC with the same class removed
+    return checkClass(p.first);
+}
+
+int Student::checkClass(int classId) const{
     for(auto itr = class_Uc.begin(); itr != class_Uc.end(); itr++){
-        if(itr->first == p.first) return -1;
+        if(itr->first == classId) return -1;
     }
-    return p.first;
+    return classId;
 }
 
 void Student::showAvailableUc() const {

@@ -40,6 +40,7 @@ public:
      * It displays a message informing the user about the performed action.
      */
     void pop();
+    Change* top();
     Change top() const;
 };
 

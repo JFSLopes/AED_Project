@@ -89,6 +89,7 @@ private:
      * @param v Vector to be displayed
      */
     void reverseShowSudents(const std::vector<Student>& v) const;
+    void undoChange();
 
 public:
     App();
@@ -320,6 +321,8 @@ public:
     void switchUcRequest();
     void showUc(short ucId) const;
     void showClass(int classId) const;
+    void revertUcAdd(UcChange* ptr);
+    void revertUcRemove(UcChange* ptr);
 };
 
 #endif //AED_PROJECT_APP_H
