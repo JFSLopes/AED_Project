@@ -405,19 +405,19 @@ short App::convertStringToUcId(std::string& s) const{
 
 void App::openFiles(){
     string header;
-    std::ifstream file1("/Users/joselopes/Desktop/AED_Project/schedule/classes_per_uc.csv");
+    std::ifstream file1("/Users/marioaraujo/Desktop/AED_Project/schedule/classes_per_uc.csv");
     if(!file1.is_open()){
         cout << "Invalid name for file with classes and uc\n";
         return;
     }
     std::getline(file1, header);
-    std::ifstream file2("/Users/joselopes/Desktop/AED_Project/schedule/classes.csv");
+    std::ifstream file2("/Users/marioaraujo/Desktop/AED_Project/schedule/classes.csv");
     if(!file2.is_open()){
         cout << "Invalid name for file with the schedule for a uc in a class\n";
         return;
     }
     std::getline(file2, header);
-    std::ifstream file3("/Users/joselopes/Desktop/AED_Project/schedule/students_classes.csv");
+    std::ifstream file3("/Users/marioaraujo/Desktop/AED_Project/schedule/students_classes.csv");
     if(!file3.is_open()){
         cout << "Invalid name for file with students' information\n";
         return;
@@ -940,11 +940,7 @@ void App::ucChangeOperation(){
                 break;
             }
             case 3:{
-                int upNumber = studentUpRequest();
-                cout << "Choose the one to be removed. ";
-                short ucId = ucIdRequest();
-                cout << "Choose the one to be added. ";
-                short ucId1 = ucIdRequest();
+                switchUcRequest();
                 break;
             }
             case 4:
@@ -1075,3 +1071,120 @@ void App::classChangeOperation(){
         waitingState();
     }
 }
+
+void App::switchUcRequest() {
+    std::pair<int,short> removed = {0,0}, added = {0,0};
+    int upNumber = studentUpRequest();
+    int classId;
+    showAvailableUc(upNumber);
+    cout << "Choose the UC to be switched. ";
+    short ucId = ucIdRequest();
+    auto itr = students.find(upNumber);
+    if(itr->checkUc(ucId)){
+        Student student = *itr;
+        classId = student.removeUc(ucId);
+        removed.second = ucId;
+        students.erase(itr);
+        students.insert(student);
+        if(classId != -1){
+            switch (classId / 100){
+                case 1:
+                    vClass1[classId%100 - 1].removeStudent(upNumber);
+                    break;
+                case 2:
+                    vClass2[classId%100 - 1].removeStudent(upNumber);
+                    break;
+                case 3:
+                    vClass3[classId%100 - 1].removeStudent(upNumber);
+                    break;
+            }
+            removed.first = classId;
+
+        }
+        if(ucId > 100){
+            auto itr1 = vUp.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUp.erase(ucId);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr1 = vUc.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUc.erase(ucId);
+            vUc.insert(uc);
+        }
+    }
+    else{
+        cout << "You can't switch an UC you are not enrolled.\n";
+        return;
+    }
+    cout << "Choose the UC that is going to replace. ";
+    short ucId1 = ucIdRequest();
+    if(itr->checkUc(ucId)){
+        cout << "Already enrolled in UC.\n";
+    }
+    else {
+        int classId1 = classWithVacancy(ucId, upNumber);
+        if (classId1 == -1) {
+            cout << "Either no existing classes with vacancies or there was schedule conflicts.\n";
+        }
+        else {
+            if(ucId > 100){
+                auto itr1 = vUp.find(ucId);
+                Uc uc = *itr1;
+                uc.addStudent(upNumber);
+                vUp.erase(ucId);
+                vUp.insert(uc);
+            }
+            else{
+                auto itr1 = vUc.find(ucId);
+                Uc uc = *itr1;
+                uc.addStudent(upNumber);
+                vUc.erase(ucId);
+                vUc.insert(uc);
+            }
+            added.first = classId1;
+            added.second = ucId1;
+            Student student = *itr;
+            student.setclass_uc(make_pair(classId1, ucId1));
+            students.erase(itr);
+            students.insert(student);
+        }
+    }
+    if(added.first == 0){
+        if(removed.first != 0){
+            switch (classId / 100){
+                case 1:
+                    vClass1[classId%100 - 1].addStudent(upNumber);
+                    break;
+                case 2:
+                    vClass2[classId%100 - 1].addStudent(upNumber);
+                    break;
+                case 3:
+                    vClass3[classId%100 - 1].addStudent(upNumber);
+                    break;
+            }
+        }
+        if(ucId > 100){
+            auto itr1 = vUp.find(ucId);
+            Uc uc = *itr1;
+            uc.addStudent(upNumber);
+            vUp.erase(ucId);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr1 = vUc.find(ucId);
+            Uc uc = *itr1;
+            uc.addStudent(upNumber);
+            vUc.erase(ucId);
+            vUc.insert(uc);
+        }
+    }
+    Change* change = new UcChange(3,removed,added);
+    requests.addStack(change);
+    change->showChange();
+
+}
+

@@ -114,12 +114,10 @@ int Student::removeUc(short ucId){
     for(auto itr = class_Uc.begin(); itr != class_Uc.end(); itr++){
         if(itr->second == ucId){
             p = *itr;
-            cout << p.first << ' ' << p.second << ' ' << ucId << endl;
             class_Uc.erase(itr);
             break;
         }
     }
-    for(auto x : class_Uc) cout << x.first << ' ' << x.second << ' '  << endl;
     ///< check if there is another UC with the same class removed
     for(auto itr = class_Uc.begin(); itr != class_Uc.end(); itr++){
         if(itr->first == p.first) return -1;
