@@ -105,3 +105,10 @@ void Display::leicDisplayOption() const{
          << "\t8. Return to the previous menu\n";
     cout << "[1..8]: ";
 }
+
+void Display::storeDescription() const{
+    cout << "The changes are going to be stored in a file called 'changes.csv'.\n"
+         << "If the file does not exist yet or you only want to store the new changes digit '1'.\n"
+         << "If you want keep the previous changes and the new ones digit '2'.\n";
+    cout << "[1..2]: ";
+}

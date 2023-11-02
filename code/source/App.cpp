@@ -37,11 +37,68 @@ void App::inicialize(){
                 cout << '\n';
                 break;
             case 6:
+                closeApp();
                 return;
             default:
                 cout << "The typed number id not valid.\n";
         }
     }
+}
+
+void App::closeApp(){
+    cout << "Want to store the changes that were made? [y/n]: ";
+    string input;
+    while(true){
+        cin >> input;
+        if(input == "y") break;
+        else if(input == "n") return;
+        else cout << "Invalid input. Choose either 'y' or 'n': ";
+    }
+    display.storeDescription();
+    while(true){
+        cin >> input;
+        short option = singleNumberRequest(input);
+        if(option == 1){
+            storeChanges(false);
+            break;
+        }
+        else if(option == 2){
+            storeChanges(true);
+            break;
+        }
+        else cout << "Invalid input. Choose either '1' or '2': ";
+    }
+}
+
+void App::storeChanges(bool append){
+    ofstream output;
+    if(append) output.open("changes.csv", ios::app);
+    else output.open("changes.csv");
+    ///< Write the header
+    if(!append) output << "Type,UpNumber,Operation,{Previous},{Change}\nType,UpNumber,{ChangedUC},{Previous},{Change}\n";
+    stack<Change*> reverse;
+    while(!requests.isEmpty()){
+        reverse.push(requests.top());
+        requests.pop();
+    }
+    while(!reverse.empty()){
+        auto ptr = dynamic_cast<UcChange*>(reverse.top());
+        if(ptr != nullptr) output << "U," << ptr->getStudent() << "," << ptr->getOperation() << ",{" << ptr->getPrev().first
+                                  << "," << ptr->getPrev().second << "},{" << ptr->getChange().first << "," << ptr->getChange().second << "}\n";
+        else{
+            auto ptr1 = dynamic_cast<ClassChange*>(reverse.top());
+            output << "C," << ptr1->getStudent() << "," << ptr1->getOperation() << ",{";
+            list<short> l;
+            for(auto itr = l.begin(); itr != l.end(); itr++){
+                if(itr == --l.end()) cout << *itr << "},";
+                else cout << *itr << ",";
+            }
+            output << "{" << ptr1->getPrev() << "},{" << ptr1->getChange() << "}\n";
+        }
+        delete reverse.top();
+        reverse.pop();
+    }
+    output.close();
 }
 
 void App::undoRequest(){

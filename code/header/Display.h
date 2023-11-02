@@ -28,6 +28,8 @@ public:
 
     void leicDisplayOption() const;
 
+    void storeDescription() const;
+
 };
 
 #endif //AED_PROJECT_DISPLAY_H

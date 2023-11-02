@@ -97,6 +97,8 @@ public:
      * @brief Is responsible for calling the functions that are going to read the files.
      */
     void openFiles();
+    void closeApp();
+    void storeChanges(bool append);
     /**
      * @brief Treats the information related to classes and University Courses (UC).
      *

@@ -82,6 +82,12 @@ public:
      * the classes involved as well the UCs that were also involved.
      */
     void showChange() const override;
+    std::list<short> getUc() const;
+    int getStudent() const;
+    short getOperation() const;
+    int getChange() const;
+    int getPrev() const;
+
 };
 
 #endif //AED_PROJECT_CHANGE_H

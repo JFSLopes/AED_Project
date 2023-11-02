@@ -11,7 +11,6 @@ bool Request::isEmpty() const {
 void Request::pop(){
     if(!isEmpty()){
         std::cout << "Successfully undone the most recent change.\n";
-        delete changes.top();
         changes.pop();
     }
     else std::cout << "There is no change to be undone.\n";

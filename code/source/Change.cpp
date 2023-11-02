@@ -83,3 +83,23 @@ void ClassChange::showChange() const{
     }
     cout << " for student " << upNumber << '\n';
 }
+
+std::list<short> ClassChange::getUc() const{
+    return allUc;
+}
+
+int ClassChange::getChange() const{
+    return change;
+}
+
+int ClassChange::getPrev() const{
+    return prev;
+}
+
+short ClassChange::getOperation() const{
+    return operation;
+}
+
+int ClassChange::getStudent() const{
+    return upNumber;
+}
