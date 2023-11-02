@@ -7,7 +7,7 @@ Subject::Subject(short UcNumber, string& type, float start, float duration)
 void Subject::show() const{
     ostringstream name;
     name << (UcNumber > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << (UcNumber % 100) << " (" << type << ")";
-    cout << setw(5) << setfill(' ') << startHour << " | " << setw(13) << setfill(' ') << left << name.str() << " | " << startHour + duration << '\n';
+    cout << right << setw(5) << setfill(' ') << startHour << " | " << left <<setw(13) << setfill(' ') << left << name.str() << " | " << startHour + duration << '\n';
 }
 
 short Subject::getUcNumber() const{

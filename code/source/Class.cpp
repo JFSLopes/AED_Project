@@ -1,7 +1,7 @@
 #include "../header/Class.h"
 
 using namespace std;
-int CAP = 100;
+int CAP = 28;
 
 void Class::completeSchedule(Subject &subject, std::string day){
     schedule.addSubject(subject, day);
@@ -46,8 +46,8 @@ std::set<int> Class::getStudents() const{
     return students;
 }
 
-bool Class::isPossibleAddStudent() const {
-    return getNumberOfStudents() < CAP;
+bool Class::isPossibleAddStudent(int number) const {
+    return number < CAP;
 }
 
 bool Class::isPossibleRemoveStudent() const {

@@ -12,7 +12,6 @@ void Uc::showSchedule(const std::vector<Class> &c1,
                       const std::vector<Class> &c2,
                       const std::vector<Class> &c3) const {
     Schedule schedule = calculateSchedule(c1, c2, c3);
-    schedule.sortSchedule();
     schedule.print();
 }
 

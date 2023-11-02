@@ -26,6 +26,8 @@ public:
 
     void yearDisplayOptions() const;
 
+    void leicDisplayOption() const;
+
 };
 
 #endif //AED_PROJECT_DISPLAY_H

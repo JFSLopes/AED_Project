@@ -32,7 +32,7 @@ public:
     void showSchedule() const;
     int getNumberOfStudents() const;
     std::set<short> getUc() const;
-    bool isPossibleAddStudent() const;
+    bool isPossibleAddStudent(int number) const;
     bool isPossibleRemoveStudent() const;
     std::set<int> getStudents() const;
     void showAvailableUc() const;

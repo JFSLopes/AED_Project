@@ -92,3 +92,16 @@ void Display::yearDisplayOptions() const{
          << "\t4. Show the students from the chosen year\n";
     cout << "[1..4]: ";
 }
+
+void Display::leicDisplayOption() const{
+    cout << "Choose an option by entering the corresponding number:\n"
+         << "\t1. Show the students in each year\n"
+         << "\t2. Show the students in each class from the LEIC course\n"
+         << "\t3. Show the students in each UC from LEIC course\n"
+         << "\t4. Show the students in each year organized by classes\n"
+         << "\t5. Show the students in each year organized by UC\n"
+         << "\t6. Show the students in each year organized by UC from the classes\n"
+         << "\t7. Show all students with no formation\n"
+         << "\t8. Return to the previous menu\n";
+    cout << "[1..8]: ";
+}

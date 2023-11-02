@@ -65,7 +65,6 @@ Schedule Student::calculateSchedule(const std::vector<Class>& c1, const std::vec
         schedule.addSubject(temp.top().first, temp.top().second);
         temp.pop();
     }
-    schedule.sortSchedule();
     return schedule;
 }
 

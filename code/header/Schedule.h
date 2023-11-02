@@ -24,7 +24,6 @@ public:
     void addSubject(Subject& subject, std::string day);
     void print() const;
     void getUcSchedule(short value, std::stack<std::pair<Subject, std::string>>& s) const;
-    void sortSchedule();
     void getUc(std::set<short>& s) const;
     bool conflict(std::stack<std::pair<Subject, std::string>>& s) const;
     std::set<short> getAllUc() const;

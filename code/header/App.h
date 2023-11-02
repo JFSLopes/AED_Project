@@ -233,7 +233,7 @@ public:
      * @param year The academic year for which the list of students is to be displayed.
      * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
      */
-    void showStudentsPerYear(short year, short sortAlgotithm) const;
+    void showStudentsPerYear(short year, short sortAlgotithm, bool showMessage) const;
     /**
      * @brief Displays the list of students belonging to a specific class.
      *
@@ -321,7 +321,9 @@ public:
     void switchUcRequest();
     void showUc(short ucId) const;
     void showClass(int classId) const;
+    std::vector<Student> intersectClassUc(int classId, short ucId) const;
     void revertUcAdd(UcChange* ptr);
+    bool isBalanced(short ucId, int classId) const;
     void revertUcRemove(UcChange* ptr);
 };
 

@@ -312,7 +312,7 @@ void App::showOccupation() const{
                     if(year >= 1 and year <= 3) break;
                     else cout << "Choose a number from 1 to 3: ";
                 }
-                showStudentsPerYear(year, Display::sortAlgorithm);
+                showStudentsPerYear(year, Display::sortAlgorithm, true);
                 break;
             }
             case 7:{
@@ -437,26 +437,27 @@ void App::read_classes_per_uc(ifstream& in){
     string line;
     while(getline(in, line)){
         short ucId;
+        int classId;
         if(line[0] == 'L'){
-            ucId = stoi(line.substr(5,3));
+            ucId = (line[6] - '0') * 10 + (line[7]-'0');
             if(vUc.find(ucId) == vUc.end()) vUc.insert(Uc(ucId));
+            classId = (line[9]- '0') * 100 + (line[14] - '0') * 10 + (line[15] -'0');
         }
         else if(line[0] == 'U'){
-            ucId = stoi(line.substr(2,3));
+            ucId = (line[4]-'0') + 100;
             ///< Adds a factor of 100 to differentiate L.EIC001 from UP001
-            if(vUp.find(ucId) == vUp.end()) vUp.insert(Uc(ucId+100));
+            if(vUp.find(ucId) == vUp.end()) vUp.insert(Uc(ucId));
+            classId = (line[6]- '0') * 100 + (line[11] - '0') * 10 + (line[12] -'0');
         }
-        int pos = line.find(',') + 1;
-        int classId = 100 * (line[pos] - '0') + stoi(line.substr(pos + 5,2));
         ///< Constructs a new Class object if it isn't already there
-        switch(line[pos]){
-            case '1':
+        switch(classId/100){
+            case 1:
                 if(vClass1.size() < classId) vClass1.push_back(Class());
                 break;
-            case '2':
+            case 2:
                 if(vClass2.size() < classId) vClass2.push_back(Class());
                 break;
-            case '3':
+            case 3:
                 if(vClass3.size() < classId) vClass3.push_back(Class());
                 break;
         }
@@ -654,7 +655,7 @@ void App::showStudentSchedule(int upNumber) const{
     itr->showSchedule(vClass1, vClass2, vClass3);
 }
 
-void App::showStudentsPerYear(short year, short sortAlgorithm) const{
+void App::showStudentsPerYear(short year, short sortAlgorithm, bool showMessage) const{
     vector<Student> vStudents;
     switch(year){
         case 1:
@@ -671,32 +672,35 @@ void App::showStudentsPerYear(short year, short sortAlgorithm) const{
             break;
     }
     cout << "\t\t YEAR " << year << " {" << vStudents.size() << "}\n";
-    string input;
-    display.yearDisplayOptions();
-    while(true){
-        cin >> input;
-        short option = singleNumberRequest(input);
-        if(option == 1){
-            for(short ucId : ucPerYear[year-1]) showStudentsPerUc(ucId, sortAlgorithm);
-            break;
-        }
-        else if(option == 2){
-            for(int classId : classPerYear[year-1]) showStudentsPerClass(classId, sortAlgorithm, false);
-            break;
-        }
-        else if(option == 3){
-            for(int classId : classPerYear[year-1]){
-                cout << "\t\t\t\t"; showClass(classId); cout << "\n\n";
-                for(short ucId : ucPerYear[year-1]) showStudentsPerClassPerUc(classId, ucId, sortAlgorithm);
+    if(showMessage){
+        string input;
+        display.yearDisplayOptions();
+        while(true){
+            cin >> input;
+            short option = singleNumberRequest(input);
+            if(option == 1){
+                for(short ucId : ucPerYear[year-1]) showStudentsPerUc(ucId, sortAlgorithm);
+                break;
             }
-            break;
+            else if(option == 2){
+                for(int classId : classPerYear[year-1]) showStudentsPerClass(classId, sortAlgorithm, false);
+                break;
+            }
+            else if(option == 3){
+                for(int classId : classPerYear[year-1]){
+                    cout << "\t\t\t\t"; showClass(classId); cout << "\n\n";
+                    for(short ucId : ucPerYear[year-1]) showStudentsPerClassPerUc(classId, ucId, sortAlgorithm);
+                }
+                break;
+            }
+            else if(option == 4){
+                showStudents(vStudents, sortAlgorithm);
+                break;
+            }
+            else cout << "Invalid input. The number must be between 1 and 4: ";
         }
-        else if(option == 4){
-            showStudents(vStudents, sortAlgorithm);
-            break;
-        }
-        else cout << "Invalid input. The number must be between 1 and 4: ";
     }
+    else showStudents(vStudents, sortAlgorithm);
 }
 
 void App::sortByName(std::vector<Student> &v) const{
@@ -832,7 +836,7 @@ int App::getNumberOfStudentsInClass(int classId) const{
     return -1;
 }
 
-void App::showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm) const{
+std::vector<Student> App::intersectClassUc(int classId, short ucId) const{
     set<int> studentsFromClass;
     switch (classId / 100){
         case 1:
@@ -857,6 +861,11 @@ void App::showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm
         auto itr = students.find(x);
         if((itr->class_uc(classId, ucId))) vStudents.push_back(*itr);
     }
+    return vStudents;
+}
+
+void App::showStudentsPerClassPerUc(int classId, short ucId, short sortAlgorithm) const{
+    vector<Student> vStudents = intersectClassUc(classId, ucId);
     cout << "\t\t\t\t"; showUc(ucId);
     if(ucId > 100) cout << " {" << vStudents.size() << "}\n";
     else cout << " {" << vStudents.size() << "}\n";
@@ -881,11 +890,17 @@ void App::showClassSchedule(int classId) const{
 void App::showUcSchedule(short ucId) const{
     if(ucId > 100){
         auto itr = vUp.find(ucId);
-        if(itr != vUp.end()) vUp.find(ucId)->showSchedule(vClass1, vClass2, vClass3);
+        if(itr != vUp.end()){
+            vUp.find(ucId)->showSchedule(vClass1, vClass2, vClass3);
+            return;
+        }
     }
     else{
         auto itr = vUc.find(ucId);
-        if(itr != vUc.end()) vUc.find(ucId)->showSchedule(vClass1, vClass2, vClass3);
+        if(itr != vUc.end()){
+            vUc.find(ucId)->showSchedule(vClass1, vClass2, vClass3);
+            return;
+        }
     }
     showUc(ucId); cout << " does not exist.\n";
 }
@@ -915,13 +930,95 @@ void App::normalShowStudents(const std::vector<Student> &v) const{
 }
 
 void App::reverseShowSudents(const std::vector<Student> &v) const{
+    int count = 1;
     auto itr = v.end() - 1;
     for(auto itr = v.end() - 1; itr >= v.begin(); itr--){
+        cout << right << setw(3) << setfill(' ') << count << ":";
+        count++;
         itr->showStudentData();
     }
 }
 
 void App::showAllStudents(short sortAlgorithm) const{
+    string input;
+    while(true){
+        display.leicDisplayOption();
+        cin >> input;
+        short option = singleNumberRequest(input);
+        switch (option){
+            case 1: {
+                for (int year = 1; year <= 3; year++)
+                    showStudentsPerYear(year, sortAlgorithm, false);
+                break;
+            }
+            case 2:{
+                for(int x = 0; x < 3; x++){
+                    for(int classId : classPerYear[x])
+                        showStudentsPerClass(classId, sortAlgorithm, false);
+                }
+                break;
+            }
+            case 3: {
+                for(int x = 0; x < 3; x++){
+                    for(int y = 0; y < (int) ucPerYear[x].size(); y++)
+                        showStudentsPerUc(ucPerYear[x][y], sortAlgorithm);
+                }
+                break;
+            }
+            case 4: {
+                for(int year = 1; year <= 3; year++){
+                    cout << "\t\t\tClasses from YEAR " << year << ":\n";
+                    for(int classId : classPerYear[year-1])
+                        showStudentsPerClass(classId, sortAlgorithm, false);
+                }
+                break;
+            }
+            case 5:{
+                for(int year = 1; year <= 3; year++){
+                    cout << "\t\t\tUC from YEAR " << year << ":\n";
+                    for(int ucId : ucPerYear[year-1])
+                        showStudentsPerUc(ucId, sortAlgorithm);
+                }
+                break;
+            }
+            case 6:{
+                for(int year = 1; year <= 3; year++){
+                    cout << "\t\t\tUC from YEAR " << year << ":\n";
+                    for(int classId : classPerYear[year-1]){
+                        set<short> sUc;
+                        cout << "\t\t\t"; showClass(classId); cout << " {";
+                        if(classId/100 == 1){
+                            cout << vClass1[classId%100 - 1].getNumberOfStudents();
+                            sUc = vClass1[classId%100 - 1].getUc();
+                        }
+                        else if(classId/100 == 2){
+                            cout << vClass2[classId%100 - 1].getNumberOfStudents();
+                            sUc = vClass2[classId%100 - 1].getUc();
+                        }
+                        else{
+                            cout << vClass3[classId%100 - 1].getNumberOfStudents();
+                            sUc = vClass3[classId%100 - 1].getUc();
+                        }
+                        cout << "}\n";
+                        for(short ucId : sUc) showStudentsPerClassPerUc(classId, ucId, sortAlgorithm);
+                    }
+                }
+                break;
+            }
+            case 7: {
+                vector<Student> vStudents;
+                copySetOfStudentsToVector(students, vStudents);
+                showStudents(vStudents, sortAlgorithm);
+                break;
+            }
+            case 8:
+                return;
+            default:
+                cout << "Invalid input. Choose a number from '1' to '7': ";
+                continue;
+        }
+        waitingState();
+    }
     vector<Student> vStudents;
     copySetOfStudentsToVector(students, vStudents);
 
@@ -966,43 +1063,57 @@ int App::classWithVacancy(short ucId, int upNumber){
     std::set<int> sClasses;
     if(ucId <= 100) sClasses = vUc.find(ucId)->getClasses();
     else sClasses = vUp.find(ucId)->getClasses();
-    for(int x : sClasses){
-        switch (x / 100){
+    ///< vector with the classes for that UC
+    vector<int> vClasses;
+    for(int x : sClasses) vClasses.push_back(x);
+    ///< organizes the classes from the one with less students for the one with more students
+    auto comp = [&] (int a, int b){
+        return intersectClassUc(a, ucId).size() < intersectClassUc(b, ucId).size() or (intersectClassUc(a, ucId).size() == intersectClassUc(b, ucId).size() and a < b);
+    };
+    sort(vClasses.begin(), vClasses.end(), comp);
+    for(int classId : sClasses){
+        switch (classId / 100){
             case 1: {
                 ///< Check if the student can be added to the class
-                if (vClass1[x % 100 - 1].isPossibleAddStudent()) {
+                if (vClass1[classId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(ucId, ucId).size())) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass1[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if (!conflict(upNumber, s)) {
-                        vClass1[x % 100 - 1].addStudent(upNumber);
-                        return x;
+                    vClass1[classId % 100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if(isBalanced(ucId, classId)){
+                        if (!conflict(upNumber, s)) {
+                            vClass1[classId%100 - 1].addStudent(upNumber);
+                            return classId;
+                        }
                     }
                 }
                 break;
             }
             case 2: {
                 ///< Check if the student can be added to the class
-                if (vClass2[x % 100 - 1].isPossibleAddStudent()) {
+                if (vClass2[classId % 100 - 1].isPossibleAddStudent((int) intersectClassUc(ucId, ucId).size())) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass2[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if (!conflict(upNumber, s)) {
-                        vClass2[x % 100 - 1].addStudent(upNumber);
-                        return x;
+                    vClass2[classId%100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if(isBalanced(ucId, classId)){
+                        if (!conflict(upNumber, s)) {
+                            vClass2[classId%100 - 1].addStudent(upNumber);
+                            return classId;
+                        }
                     }
                 }
                 break;
             }
             case 3: {
                 ///< Check if the student can be added to the class
-                if (vClass3[x % 100 - 1].isPossibleAddStudent()) {
+                if (vClass3[classId% 100 - 1].isPossibleAddStudent((int) intersectClassUc(ucId, ucId).size())) {
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
-                    vClass3[x % 100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if (!conflict(upNumber, s)) {
-                        vClass3[x % 100 - 1].addStudent(upNumber);
-                        return x;
+                    vClass3[classId%100 - 1].getUcScheduleFromSchedule(ucId, s);
+                    if(isBalanced(ucId, classId)){
+                        if (!conflict(upNumber, s)) {
+                            vClass3[classId%100 - 1].addStudent(upNumber);
+                            return classId;
+                        }
                     }
                 }
                 break;
@@ -1042,6 +1153,10 @@ void App::showClass(int classId) const{
 }
 
 void App::classChangeOperation(){
+    ///< checkUc -> diz se tem a UC
+    ///< Uc.h -> getClasses
+    ///< class.h -> getUcScheduleFromSchedule(ucId, stack que vai ser preenchida)
+    ///< conflict(aluno, stack) -> vê se  existe conflito entre o horário do aluno e da Uc.
     while (true){
         string input;
         display.showchangeoptions(1);
@@ -1283,5 +1398,30 @@ void App::revertUcRemove(UcChange *ptr){
     student.setclass_uc(ptr->getChange());
     students.erase(itr);
     students.insert(student);
+}
+
+bool App::isBalanced(short ucId, int classId) const{
+    set<int> sClasses = (ucId > 100 ? vUp.find(ucId)->getClasses() : vUc.find(ucId)->getClasses());
+    int max = INT_MIN;
+    vector<int> classesWithMax;
+    int min = INT_MAX;
+    ///< finds the class with more and less students for that UC
+    for(int x : sClasses){
+        int numberOfStudents = (int) intersectClassUc(x, ucId).size();
+        if(classId == x) numberOfStudents+=1;
+        if(max < numberOfStudents) max = numberOfStudents;
+        if(min > numberOfStudents) min = numberOfStudents;
+    }
+    ///< Adds the classes with greater occupation
+    for(int x : sClasses){
+        int temp = (int) intersectClassUc(x, ucId).size();
+        if(x == classId) ++temp;
+        if(temp == max) classesWithMax.push_back(x);
+    }
+    ///< It is balanced
+    if(max - min <= 4) return true;
+    ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
+    if(find(classesWithMax.begin(), classesWithMax.end(), classId) == classesWithMax.end()) return true;
+    return false;
 }
 
