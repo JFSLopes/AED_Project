@@ -30,13 +30,13 @@ private:
 
     std::set<Uc> vUc; ///< stores all uc's of type L.EICxxx
     std::set<Uc> vUp; ///< stores UPxxx uc
-    std::vector<std::vector<short>> ucPerYear; ///< Each position stores the ucId's of each year
-    std::vector<std::set<int>> classPerYear; ///< Each position stores classId's of each year
+    std::vector<std::vector<short>> ucPerYear; ///< Each position on the vector stores the UC's ID of an year
+    std::vector<std::set<int>> classPerYear; ///< Each position on the vector stores the classes' ID of an year
     std::vector<Class> vClass1; ///< stores all the classes from the first year
     std::vector<Class> vClass2; ///< stores all the classes from the second year
     std::vector<Class> vClass3; ///< stores all the classes from the third year
     std::set<Student> students; ///< stores all students
-    Request requests;
+    Request requests; ///< stores the changes that were made.
     Display display; ///< it allows to call function that print useful information on console
     /**
      * @brief receives a Students vector and orders that same vector by student's name
