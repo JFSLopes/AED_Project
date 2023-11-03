@@ -48,9 +48,9 @@ void App::inicialize(){
     openFiles();
     readStoredChanged();
     display.description();
+    display.menu();
     while(true){
         string input;
-        display.menu();
         cin >> input;
         short option = singleNumberRequest(input);
         switch(option){
@@ -80,7 +80,7 @@ void App::inicialize(){
                 closeApp();
                 return;
             default:
-                cout << "The typed number id not valid.\n";
+                cout << "Invalid number. Choose a number between '1' and '6': ";
         }
     }
 }
@@ -97,6 +97,7 @@ void App::closeApp(){
         }
         else cout << "Invalid input. Choose either 'y' or 'n': ";
     }
+    cout << '\n';
     display.storeDescription();
     while(true){
         cin >> input;

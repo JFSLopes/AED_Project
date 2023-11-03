@@ -9,9 +9,10 @@ void Display::description() const{
     cout << "It also allows changes, whenever possible, to the stored information. The inputs are case insensitive.\n";
     cout << "The API allows to:\n";
             cout << "\t-> see a student, class or uc schedule;\n";
-            cout << "\t-> see a class, uc, course, uc in a class and in at least 'n' Uc occupation;\n";
+            cout << "\t-> see the occupation in a class, UC, course, UC in a class and in at least 'n' UC;\n";
             cout << "\t-> process a change in a student class or uc;\n";
             cout << "\t-> undo the most recent change made;\n";
+            cout << "\t-> store the changes in a file that can be uploaded in the future;\n";
 }
 
 void Display::menu() const{
