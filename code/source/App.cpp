@@ -3,10 +3,50 @@
 #include <iostream>
 using namespace std;
 
+void App::readStoredChanged(){
+    string line;
+    ifstream in("changes.csv");
+    if(!in.is_open()){
+        cout << "There is no previous data.\n";
+        return;
+    }
+    cout << "Loading previous data from changes.csv...\n";
+    ///< Ignore the header
+    getline(in, line);
+    getline(in, line);
+    while(getline(in, line)){
+        short operation;
+        int upNumber, pos = 0;
+        pair<int, short> prev, change;
+        if(line[0] == 'U'){
+            operation = line[12] - '0';
+            upNumber = stoi(line.substr(2,9));
+            prev.first = stoi(line.substr(15,3)); prev.second = stoi(line.substr(19,3));
+            change.first = stoi(line.substr(25,3)); change.second = stoi(line.substr(29,3));
+            Change* ptr = new UcChange(operation, upNumber, prev, change);
+            auto ptr1 = dynamic_cast<UcChange*>(ptr);
+            if(operation  == 1) revertUcRemove(ptr1);
+            else if(operation == 2) revertUcAdd(ptr1);
+            else {
+                pair<int, short> temp = ptr1->getChange();
+                ptr1->setChange(ptr1->getPrev());
+                revertUcAdd(ptr1);
+                ptr1->setChange(temp);
+                revertUcRemove(ptr1);
+            }
+        }
+        else{
+
+        }
+    }
+    cout << "Completed loading changes.\n";
+}
+
 App::App() : ucPerYear(vector<vector<short>>(3)), classPerYear(vector<set<int>>(3)) {}
 
 void App::inicialize(){
     openFiles();
+    readStoredChanged();
     display.description();
     while(true){
         string input;
@@ -51,7 +91,10 @@ void App::closeApp(){
     while(true){
         cin >> input;
         if(input == "y") break;
-        else if(input == "n") return;
+        else if(input == "n"){
+            requests.clean();
+            return;
+        }
         else cout << "Invalid input. Choose either 'y' or 'n': ";
     }
     display.storeDescription();
@@ -83,8 +126,10 @@ void App::storeChanges(bool append){
     }
     while(!reverse.empty()){
         auto ptr = dynamic_cast<UcChange*>(reverse.top());
-        if(ptr != nullptr) output << "U," << ptr->getStudent() << "," << ptr->getOperation() << ",{" << ptr->getPrev().first
-                                  << "," << ptr->getPrev().second << "},{" << ptr->getChange().first << "," << ptr->getChange().second << "}\n";
+        if(ptr != nullptr) output << "U," << ptr->getStudent() << "," << ptr->getOperation() << ",{" << right << setw(3) << setfill('0')
+                                  << ptr->getPrev().first << "," << right << setw(3) << setfill('0') << ptr->getPrev().second << "},{"
+                                  << right << setw(3) << setfill('0') << ptr->getChange().first << "," << right << setw(3) << setfill('0')
+                                  << ptr->getChange().second << "}\n";
         else{
             auto ptr1 = dynamic_cast<ClassChange*>(reverse.top());
             output << "C," << ptr1->getStudent() << "," << ptr1->getOperation() << ",{";
@@ -491,6 +536,7 @@ void App::openFiles(){
 }
 
 void App::read_classes_per_uc(ifstream& in){
+    set<int> temp;
     string line;
     while(getline(in, line)){
         short ucId;
@@ -506,22 +552,24 @@ void App::read_classes_per_uc(ifstream& in){
             if(vUp.find(ucId) == vUp.end()) vUp.insert(Uc(ucId));
             classId = (line[6]- '0') * 100 + (line[11] - '0') * 10 + (line[12] -'0');
         }
-        ///< Constructs a new Class object if it isn't already there
-        switch(classId/100){
-            case 1:
-                if(vClass1.size() < classId) vClass1.push_back(Class());
-                break;
-            case 2:
-                if(vClass2.size() < classId) vClass2.push_back(Class());
-                break;
-            case 3:
-                if(vClass3.size() < classId) vClass3.push_back(Class());
-                break;
-        }
+        temp.insert(classId);
         bool alreadyAdded = binary_search(ucPerYear[classId/100 - 1].begin(), ucPerYear[classId/100 - 1].end(), ucId);
         if(!alreadyAdded) ucPerYear[classId/100 - 1].push_back(ucId);
         alreadyAdded = classPerYear[classId/100 - 1].find(ucId) != classPerYear[classId/100 - 1].end();
         if(!alreadyAdded) classPerYear[classId/100 - 1].insert(classId);
+    }
+    for(int classId : temp){
+        switch(classId/100){
+            case 1:
+                vClass1.push_back(Class());
+                break;
+            case 2:
+                vClass2.push_back(Class());
+                break;
+            case 3:
+                vClass3.push_back(Class());
+                break;
+        }
     }
     in.close();
 }

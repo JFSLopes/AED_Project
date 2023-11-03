@@ -30,7 +30,7 @@ void Class::getUcScheduleFromSchedule(short id, stack<pair<Subject,string>>& s) 
 void Class::showAvailableUc() const{
     set<short> uc;
     schedule.getUc(uc);
-    for(short x : uc) cout << (x > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x%100 << " ";
+    for(short x : uc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x%100 << " ";
     cout << '\n';
 }
 

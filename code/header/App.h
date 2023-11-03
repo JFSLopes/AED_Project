@@ -327,6 +327,7 @@ public:
     void revertUcAdd(UcChange* ptr);
     bool isBalanced(short ucId, int classId) const;
     void revertUcRemove(UcChange* ptr);
+    void readStoredChanged();
 };
 
 #endif //AED_PROJECT_APP_H

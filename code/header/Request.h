@@ -42,6 +42,7 @@ public:
     void pop();
     Change* top();
     Change top() const;
+    void clean();
 };
 
 #endif //AED_PROJECT_REQUEST_H

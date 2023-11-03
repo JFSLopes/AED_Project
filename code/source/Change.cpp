@@ -51,7 +51,7 @@ int UcChange::getStudent() const{
 }
 
 void UcChange::setChange(std::pair<int, short> p){
-    change = prev;
+    change = p;
 }
 
 

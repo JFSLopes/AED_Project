@@ -27,4 +27,10 @@ Change* Request::top(){
     return changes.top();
 }
 
+void Request::clean(){
+    while(!changes.empty()){
+        delete changes.top();
+        changes.pop();
+    }
+}
 
