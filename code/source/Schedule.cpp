@@ -45,21 +45,21 @@ void Schedule::print() const{
     if(fri.size() == 0) cout << "/*******************/\n";
 }
 
-void Schedule::getUcSchedule(short value, stack<pair<Subject,string>>& s) const{
+void Schedule::getUcSchedule(short ucId, stack<pair<Subject,string>>& s) const{
     for(const Subject& subject : mon){
-        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Monday"));
+        if(subject.getUcNumber() == ucId) s.push(make_pair(subject, "Monday"));
     }
     for(const Subject& subject : tue){
-        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Tuesday"));
+        if(subject.getUcNumber() == ucId) s.push(make_pair(subject, "Tuesday"));
     }
     for(const Subject& subject : wed){
-        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Wednesday"));
+        if(subject.getUcNumber() == ucId) s.push(make_pair(subject, "Wednesday"));
     }
     for(const Subject& subject : thu){
-        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Thursday"));
+        if(subject.getUcNumber() == ucId) s.push(make_pair(subject, "Thursday"));
     }
     for(const Subject& subject : fri){
-        if(subject.getUcNumber() == value) s.push(make_pair(subject, "Friday"));
+        if(subject.getUcNumber() == ucId) s.push(make_pair(subject, "Friday"));
     }
 }
 

@@ -260,14 +260,6 @@ public:
      */
     void showStudentsPerUc(short ucId, short sortAlgorithm) const;
     /**
-     * @brief Displays the classes associated with a specific UC.
-     *
-     * This function presents a list of classes related to a particular UC identified by its ID.
-     *
-     * @param ucId The ID of the UC for which the classes are displayed.
-     */
-    void showClassFromUc(short ucId) const;
-    /**
      * @brief Displays the UC associated with a specific class.
      *
      * This function presents a list of University Subjects related to a particular class identified by its ID.

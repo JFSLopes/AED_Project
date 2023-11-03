@@ -48,10 +48,30 @@ public:
      * the UCs and classes that were involved.
      */
     void showChange() const override;
+    /**
+     * @brief Indicates the operation correspondent to the change.
+     * @return Return a short where 1 means add, 2 means remove and 3 mean switch.
+     */
     short getOperation() const;
+    /**
+     * @brief Indicates UP number of the student.
+     * @return Returns an integer correspondent to the student UP number.
+     */
     int getStudent() const;
+    /**
+     * @brief Only used for switches and indicates the previous class and UC the student was before the change.
+     * @return Return a pair that contains the class and UC.
+     */
     std::pair<int, short> getPrev() const;
+    /**
+     * @brief Indicates the class and UC that were changed.
+     * @return Return a pair that contains the class and UC.
+     */
     std::pair<int, short> getChange() const;
+    /**
+     * @brief Changes the current value stored in 'change' to 'p'.
+     * @param p Indicates the pair of class and UC that is going to replace the pair stored in 'change'.
+     */
     void setChange(std::pair<int, short> p);
 };
 
@@ -82,12 +102,31 @@ public:
      * the classes involved as well the UCs that were also involved.
      */
     void showChange() const override;
+    /**
+     * @brief Returns a list with all UC that were part of any of the class changes.
+     * @return Returns a list with the UC that were part of the operation.
+     */
     std::list<short> getUc() const;
+    /**
+     * @brief Indicates the UP number of the student associated with the change.
+     * @return Returns the UP number of the student.
+     */
     int getStudent() const;
+    /**
+     * @brief Indicates the operation correspondent to the change.
+     * @return Return a short where 1 means add, 2 means remove and 3 mean switch.
+     */
     short getOperation() const;
+    /**
+     * @brief Indicates the class associated with the change.
+     * @return Returns an integer correspondent to the class.
+     */
     int getChange() const;
+    /**
+     * @brief Only used in switches, indicates the class that was changed.
+     * @return Returns an integer correspondent to the new class.
+     */
     int getPrev() const;
-
 };
 
 #endif //AED_PROJECT_CHANGE_H

@@ -23,7 +23,7 @@ void Request::showMostRecent() const{
     else std::cout << "There are no changes.\n";
 }
 
-Change* Request::top(){
+Change* Request::top() const{
     return changes.top();
 }
 

@@ -34,24 +34,12 @@ void Class::showAvailableUc() const{
     cout << '\n';
 }
 
-void Class::OrderedByName(const std::set<Student> &allStudents, std::vector<Student>& ordered) const{
-    for(int x : students){
-        set<Student>::iterator itr = allStudents.find(Student(x));
-        if(itr != allStudents.end()) ordered.push_back(*itr);
-    }
-    sort(ordered.begin(), ordered.end(), [](const Student& a, const Student& b) {return a.getName() < b.getName();});
-}
-
 std::set<int> Class::getStudents() const{
     return students;
 }
 
 bool Class::isPossibleAddStudent(int number) const {
     return number < CAP;
-}
-
-bool Class::isPossibleRemoveStudent() const {
-    return getNumberOfStudents() > 0;
 }
 
 std::set<short> Class::getUc() const{

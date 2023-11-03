@@ -40,8 +40,14 @@ public:
      * It displays a message informing the user about the performed action.
      */
     void pop();
-    Change* top();
-    Change top() const;
+    /**
+     * @brief Returns a pointer to the element on the top of the stack in case it exists.
+     * @return Returns a pointer to the element on the top of the stack, aka, most recent change
+     */
+    Change* top() const;
+    /**
+     * @brief Deallocates all the dynamic memory used to store the changes
+     */
     void clean();
 };
 

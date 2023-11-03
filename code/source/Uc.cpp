@@ -2,10 +2,10 @@
 
 using namespace std;
 
-Uc::Uc(short id) : UcIdentifier(id) {}
+Uc::Uc(short id) : UcId(id) {}
 
-void Uc::addClass(int c){
-    classes.insert(c);
+void Uc::addClass(int classId){
+    classes.insert(classId);
 }
 
 void Uc::showSchedule(const std::vector<Class> &c1,
@@ -24,13 +24,13 @@ Schedule Uc::calculateSchedule(const std::vector<Class> &c1,
         int year = x / 100, classNumber = x % 100;
         switch (year){
             case 1:
-                c1[classNumber-1].getUcScheduleFromSchedule(UcIdentifier, temp);
+                c1[classNumber-1].getUcScheduleFromSchedule(UcId, temp);
                 break;
             case 2:
-                c2[classNumber-1].getUcScheduleFromSchedule(UcIdentifier, temp);
+                c2[classNumber-1].getUcScheduleFromSchedule(UcId, temp);
                 break;
             case 3:
-                c3[classNumber-1].getUcScheduleFromSchedule(UcIdentifier, temp);
+                c3[classNumber-1].getUcScheduleFromSchedule(UcId, temp);
                 break;
         }
     }
@@ -45,20 +45,12 @@ Schedule Uc::calculateSchedule(const std::vector<Class> &c1,
     return schedule;
 }
 
-void Uc::showClassesForUc() const{
-    cout << (UcIdentifier > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << UcIdentifier%100 <<'\n';
-    for(int x : classes){
-        cout << x/100 << "LEIC" << setw(2) << setfill('0') << x%100 << " ";
-    }
-    cout<< '\n';
+void Uc::addStudent(int upNumber){
+    students.insert(upNumber);
 }
 
-void Uc::addStudent(int up){
-    students.insert(up);
-}
-
-void Uc::removeStudent(int up) {
-    students.erase(up);
+void Uc::removeStudent(int upNumber) {
+    students.erase(upNumber);
 }
 
 std::set<int> Uc::getStudents() const{
@@ -74,9 +66,9 @@ int Uc::numberStudents() const{
 }
 
 short Uc::getId() const{
-    return UcIdentifier;
+    return UcId;
 }
 
 bool operator<(const Uc& a, const Uc& b){
-    return a.UcIdentifier < b.UcIdentifier;
+    return a.UcId < b.UcId;
 }

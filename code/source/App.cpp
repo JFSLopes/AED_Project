@@ -658,7 +658,7 @@ void App::read_students(ifstream& in){
     while(true){
         if(getline(in, line).eof()){
             Student student(prevUP, prevName);
-            student.setclass_Uc(class_uc);
+            student.setclass_uc(class_uc);
             students.insert(student);
             break;
         }
@@ -691,7 +691,7 @@ void App::read_students(ifstream& in){
         }
         if(prevUP != up){
             Student student(prevUP, prevName);
-            student.setclass_Uc(class_uc);
+            student.setclass_uc(class_uc);
             student.setEnrolledYears(yearsEnrolled);
             students.insert(student);
             prevUP = up;
@@ -908,11 +908,6 @@ void App::studentsIn_n_UC(int numberOfUc, short sortAlgorithm) const{
         else cout << "Invalid input, choose either 'y' or 'n': ";
     }
     showStudents(vStudents, sortAlgorithm);
-}
-
-void App::showClassFromUc(short ucId) const{
-    if(ucId > 100) vUp.find(ucId)->showClassesForUc();
-    else vUc.find(ucId)->showClassesForUc();
 }
 
 void App::showUcFromClass(int classId) const{
