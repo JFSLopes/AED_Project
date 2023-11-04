@@ -48,8 +48,8 @@ void App::inicialize(){
     openFiles();
     readStoredChanged();
     display.description();
-    display.menu();
     while(true){
+        display.menu();
         string input;
         cin >> input;
         short option = singleNumberRequest(input);
@@ -96,6 +96,31 @@ void App::closeApp(){
             return;
         }
         else cout << "Invalid input. Choose either 'y' or 'n': ";
+    }
+    cout << '\n';
+    display.askFileToStore();
+    while(true){
+        cin >> input;
+        short option = singleNumberRequest(input);
+        if(option == 1){
+            ofstream output("../schedule/students_classes.csv");
+            output << "StudentCode,StudentName,UcCode,ClassCode\n";
+            for(auto student : students){
+                for(auto class_uc : student.getList()){
+                    output << student.getUpNumber() << ',' << student.getName() << ',';
+                    output << right <<(class_uc.second < 100 ? "L.EIC" : "UP") << setw(3) << setfill('0') << class_uc.second%100 << ',';
+                    output << class_uc.first/100 << "LEIC" << right << setw(2) << setfill('0') << class_uc.first%100 << '\n';
+                }
+            }
+            requests.clean();
+            ofstream file("changes.csv", ios::trunc);
+            file.close();
+            return;
+        }
+        else if(option == 2){
+            break;
+        }
+        else cout << "Invalid input. Choose either '1' or '2': ";
     }
     cout << '\n';
     display.storeDescription();
@@ -252,6 +277,7 @@ void App::addUcRequest(){
             cout << "Either no existing classes with vacancies or there was schedule conflicts.\n";
             return;
         }
+        ///< Add the student to the new UC
         if(ucId > 100){
             auto itr = vUp.find(ucId);
             Uc uc = *itr;
@@ -266,6 +292,7 @@ void App::addUcRequest(){
             vUc.erase(ucId);
             vUc.insert(uc);
         }
+        ///< Adds the new class_uc to the student schedule
         Student student = *itr;
         student.setclass_uc(make_pair(classId, ucId));
         students.erase(itr);
@@ -283,7 +310,9 @@ void App::removeUcRequest() {
     short ucId = ucIdRequest();
     auto itr = students.find(upNumber);
     if(itr->checkUc(ucId)){
+        int classId1 = itr->getClass(ucId);
         Student student = *itr;
+        ///< Removes the class_uc from schedule, returns the class ID if there is no other UC with the same class or -1 otherwise
         classId = student.removeUc(ucId);
         students.erase(itr);
         students.insert(student);
@@ -299,8 +328,8 @@ void App::removeUcRequest() {
                     vClass3[classId%100 - 1].removeStudent(upNumber);
                     break;
             }
-
         }
+        ///< Removes the student from the UC
         if(ucId > 100){
             auto itr = vUp.find(ucId);
             Uc uc = *itr;
@@ -315,7 +344,7 @@ void App::removeUcRequest() {
             vUc.erase(ucId);
             vUc.insert(uc);
         }
-        Change* change = new UcChange(2, upNumber, make_pair(0,0), make_pair(classId,ucId));
+        Change* change = new UcChange(2, upNumber, make_pair(0,0), make_pair(classId1,ucId));
         requests.addStack(change);
         change->showChange();
 
@@ -345,16 +374,19 @@ void App::showSchedules() const{
             case 1: {
                 int upNumber = studentUpRequest();
                 showStudentSchedule(upNumber);
+                cout << '\n';
                 break;
             }
             case 2: {
                 short ucId = ucIdRequest();
                 showUcSchedule(ucId);
+                cout << '\n';
                 break;
             }
             case 3: {
                 int classId = classIdRequest();
                 showClassSchedule(classId);
+                cout << '\n';
                 break;
             }
             case 4:
@@ -454,6 +486,7 @@ void App::showOccupation() const{
                 continue;
         }
         waitingState();
+        cout << '\n';
     }
 }
 
@@ -879,7 +912,11 @@ void App::showStudents(std::vector<Student>& vStudents, short sortAlgorithm) con
 }
 
 void App::showStudentsPerUc(short ucId, short sortAlgorithm) const{
-    showUc(ucId); cout<< '\n';
+    if((ucId > 100 and vUp.find(ucId) == vUp.end()) or (ucId < 100 and vUc.find(ucId) == vUc.end())){
+        cout << '\t'; showUc(ucId); cout << " does not exist.\n";
+        return;
+    }
+    cout << "\t\t\t\t"; showUc(ucId); cout<< '\n';
     set<int> sStudents;
 
     if(ucId < 100) sStudents = vUc.find(ucId)->getStudents();
@@ -1295,13 +1332,16 @@ void App::classChangeOperation(){
 void App::switchUcRequest() {
     std::pair<int,short> removed = {0,0}, added = {0,0};
     int upNumber = studentUpRequest();
-    int classId;
+    int classId, classId1;
     showAvailableUc(upNumber);
     cout << "Choose the UC to be switched. ";
     short ucId = ucIdRequest();
     auto itr = students.find(upNumber);
     if(itr->checkUc(ucId)){
+        ///< Stores the class associated with the UC that is going to be removed
+        classId1 = itr->getClass(ucId);
         Student student = *itr;
+        ///< Removes the class_uc from schedule and returns the classId in case there is no other UC with the removed class.
         classId = student.removeUc(ucId);
         removed.second = ucId;
         students.erase(itr);
@@ -1377,6 +1417,7 @@ void App::switchUcRequest() {
             students.insert(student);
         }
     }
+    ///< Getting here means that either the switch was possible or only the remove was possible.
     if(added.first == 0){
         if(removed.first != 0){
             ///< Means that the class was removed, so add it again
@@ -1409,13 +1450,15 @@ void App::switchUcRequest() {
         }
         ///< Add the removed subject back to the schedule
         Student student = *students.find(upNumber);
+        removed.first = student.getClass(ucId);
         student.setclass_uc(removed);
         students.erase(itr);
         students.insert(student);
     }
     else{
         ///< means that the switch was successfully
-        Change* change = new UcChange(3, upNumber, removed,added);
+        removed.first = classId1;
+        Change* change = new UcChange(3, upNumber, removed, added);
         requests.addStack(change);
         change->showChange();
     }
@@ -1516,7 +1559,7 @@ bool App::isBalanced(short ucId, int classId) const{
     ///< Adds the classes with greater occupation
     for(int x : sClasses){
         int temp = (int) intersectClassUc(x, ucId).size();
-        if(x == classId) ++temp;
+        if(x == classId) temp+=1;
         if(temp == max) classesWithMax.push_back(x);
     }
     ///< It is balanced

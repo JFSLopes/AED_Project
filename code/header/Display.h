@@ -5,6 +5,7 @@
 #include <list>
 #include <string>
 
+
 class Display{
 private:
     const std::vector<std::string> l = {"Ascending UP number", "Descending UP number", "Ascending alphabetic order", "Descending alphabetic order"};
@@ -30,6 +31,7 @@ public:
 
     void storeDescription() const;
 
+    void askFileToStore() const;
 };
 
 #endif //AED_PROJECT_DISPLAY_H

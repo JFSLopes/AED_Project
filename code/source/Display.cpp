@@ -113,3 +113,10 @@ void Display::storeDescription() const{
          << "If you want keep the previous changes and the new ones digit '2'.\n";
     cout << "[1..2]: ";
 }
+
+void Display::askFileToStore() const{
+    cout << "Choose one of this 2 options:\n"
+         << "\t1. Store the changes in the file that contains the student information.\n"
+         << "\t2. Store the changes in another file that can be uploaded in the future.\n";
+    cout << "[1..2]: ";
+}

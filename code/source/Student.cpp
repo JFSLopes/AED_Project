@@ -15,6 +15,12 @@ int Student::getUpNumber() const {
     return UPnumber;
 }
 
+int Student::getClass(short ucId) const{
+    for(auto x : class_Uc)
+        if(x.second == ucId) return x.first;
+    return -1;
+}
+
 int Student::getNumberOfUc() const{
     return (int) class_Uc.size();
 }
@@ -122,6 +128,6 @@ int Student::checkClass(int classId) const{
 }
 
 void Student::showAvailableUc() const {
-    for(auto x : class_Uc) cout << (x.second > 100 ? "UP" : "L.EIC") << setw(3) << setfill('0') << x.second%100 << "   ";
+    for(auto x : class_Uc) cout << (x.second > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x.second%100 << "   ";
     cout << '\n';
 }

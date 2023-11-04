@@ -67,6 +67,12 @@ public:
      */
     std::string getName() const;
     /**
+     * @brief Returns the class that corresponds to the given UC ID.
+     * @param ucId Indicates the UC ID.
+     * @return Return the class ID associated with the UC or -1 otherwise.
+     */
+    int getClass(short ucId) const;
+    /**
      * @brief Returns a list containing all UC and classes he is enrolled in.
      * @return Returns student's UC and classes his enrolled.
      */
