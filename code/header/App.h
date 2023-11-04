@@ -21,13 +21,12 @@ class Request;
 
 /**
  * @class App
- * @brief App reads from the files and stores the data
+ * @brief App reads from the files and stores the data.
  *
  * App reads the information about classes, uc's, students, schedule from files and stores it in the corresponding container.
  */
 class App{
 private:
-
     std::set<Uc> vUc; ///< stores all uc's of type L.EICxxx
     std::set<Uc> vUp; ///< stores UPxxx uc
     std::vector<std::vector<short>> ucPerYear; ///< Each position on the vector stores the UC's ID of an year
@@ -45,17 +44,17 @@ private:
      */
     void sortByName(std::vector<Student>& v) const;
     /**
-     * @brief receives a set of integers and fills a vector with the students related to values in the set
+     * @brief receives a set of integers and fills a vector with the students related to values in the set.
      *
      * @param s Set containing the up number of students
      * @param v Vector that is going to be filled with the students
      */
     void copySetOfIntToVector(const std::set<int>& s, std::vector<Student>& v) const;
     /**
-     * @brief copies the values from the set to the given vector
+     * @brief copies the values from the set to the given vector.
      *
-     * @param s Set containing the Students
-     * @param v Vector that is going to be filled with the students
+     * @param s Set containing the Students.
+     * @param v Vector that is going to be filled with the students.
      */
     void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
     /**
@@ -74,30 +73,53 @@ private:
     short convertStringToUcId(std::string& s) const;
     void showStudents(std::vector<Student>& vStudents, short sortAlgorithm) const;
     /**
-     * @brief Display the students within a vector
+     * @brief Display the students within a vector.
      *
      * Displays a vector that is already ordered according to the user's need.
      *
-     * @param v Vector to be displayed
+     * @param v Vector to be displayed.
      */
     void normalShowStudents(const std::vector<Student>& v) const;
     /**
-     * @brief Display the students within a vector
+     * @brief Display the students within a vector.
      *
      * Displays, in reverse, a vector that is already ordered according to the user's need.
      *
-     * @param v Vector to be displayed
+     * @param v Vector to be displayed.
      */
     void reverseShowSudents(const std::vector<Student>& v) const;
+    /**
+     * @brief Reverts the changes made by the user.
+     *
+     * This function reverts the most recent change made by the user when requested and eliminates that changes from the data set.
+     */
     void undoChange();
 
 public:
+    /**
+     * @brief Constructs objects of App.
+     *
+     * This constructor is used to create objects of App, that allows it to start the execution.
+     */
     App();
     /**
      * @brief Is responsible for calling the functions that are going to read the files.
      */
     void openFiles();
+    /**
+     * @brief Closes the program.
+     *
+     * This function is responsible for closing the program, including cleaning the heap and display some option to user of
+     * what we wants to to with the stored information.
+     */
     void closeApp();
+    /**
+     * @brief Stores the changes.
+     *
+     * This functions is going to store the information in a csv file created for storing those by rewriting the file or appending the new changes.
+     *
+     * @param append True if user wants to add the new changes to previous ones, false otherwise.
+     */
     void storeChanges(bool append);
     /**
      * @brief Treats the information related to classes and University Courses (UC).
@@ -148,11 +170,24 @@ public:
      * This function receives an input from the user anf from there displays the occupation requested by the user.
      */
     void showOccupation() const;
-
+    /**
+     * @brief Shows the students.
+     *
+     * This function is going to call other method according to user input that display the students according to user's needs.
+     */
     void processChange();
+    /**
+     * @brief Deals with a UC change request.
+     *
+     * This function deals with all 3 UC changes options by calling the correct method for each scenario.
+     */
     void ucChangeOperation();
+    /**
+     * @brief Deals with a class change request.
+     *
+     * This function deals with all 3 classes changes options by calling the correct method for each scenario.
+     */
     void classChangeOperation();
-
     /**
      * @brief Transforms a class input in a class ID.
      *
@@ -180,11 +215,25 @@ public:
      * @return Returns a integer that corresponds to a student UP number.
      */
     int studentUpRequest() const;
-
+    /**
+     * @brief Displays students.
+     *
+     * This function is going to display the students that are enrolled in at least 'numberOfUc' UC.
+     * The order the students are displayed is set by 'sortAlgorithm'.
+     *
+     * @param numberOfUc Minimum number of UC the student must be part of.
+     * @param sortAlgorithm Represents the sort algorithm being used.
+     */
     void studentsIn_n_UC(int numberOfUc, short sortAlgorithm) const;
-
+    /**
+     * @brief Reverts the most recent change if possible.
+     */
     void undoRequest();
-
+    /**
+     * @brief Tries to add an UC to a student.
+     *
+     * This function is going to add, if possible, a new UC to a given student.
+     */
     void addUcRequest();
     /**
      * @brief Transforms a UC and class input in a UC and class ID.
@@ -280,6 +329,10 @@ public:
      * @param sortAlgorithm Indicates the order the students are going to be displayed.
      */
     void showAllStudents(short sortAlgorithm) const;
+    /**
+     * @brief Displays the UC's a student is enrolled in.
+     * @param upNumber Represents a student UP number.
+     */
     void showAvailableUc(int upNumber) const;
     /**
      * @brief Displays all student that are simultaneous in a class and UC.
@@ -307,18 +360,90 @@ public:
      * @param ucId Indicates the UC.
      */
     void showUcSchedule(short ucId) const;
+    /**
+     * @brief Returns if the student can be add to a new UC.
+     * @param upNumber Indicates the UP number of a student.
+     * @return Return true the student has less the 7 UC, false otherwise.
+     */
     bool isPossibleAddUc(int upNumber) const;
+
     bool isPossibleAddClass() const;
+    /**
+     * @brief Check if there is a class that can accept the given student.
+     *
+     * This function checks if the class capacity is not full, if there are no schedule conflicts and if the classes are balanced.
+     * If these 3 condition are verified then it returns the class ID of the class the student will be added.
+     *
+     * @param ucId Indicates the UC ID.
+     * @param upNumber Indicates the student UP number.
+     * @return Returns -1 if there is no class available or the class ID if it can be added.
+     */
     int classWithVacancy(short ucId, int upNumber);
+    /**
+     * @brief Checks for schedule conflicts.
+     *
+     * This function will check for schedules conflicts.
+     * A conflict can only happen if the student has 2 classes at the same time. The classes have to be TP and PL or any combination of these 2.
+     *
+     * @param upNumber Indicates the student UP number.
+     * @param s Stores the schedule of given UC.
+     * @return Returns true if there is no schedule conflict, false otherwise.
+     */
     bool conflict(int upNumber, std::stack<std::pair<Subject, std::string>>& s) const;
+    /**
+     * @brief Removes a student UC.
+     *
+     * This function removes a UC from a given student, if possible.
+     */
     void removeUcRequest();
+    /**
+     * @brief Switches a student UC.
+     *
+     * This function switches a UC from a given student for another, if possible.
+     */
     void switchUcRequest();
+    /**
+     * @brief Displays the UC.
+     * @param ucId Indicates the UC ID.
+     */
     void showUc(short ucId) const;
+    /**
+     * @brief Displays the class.
+     * @param ucId Indicates the class ID.
+     */
     void showClass(int classId) const;
+    /**
+     * @brief Common students in a given class and UC.
+     *
+     * This function calculates the students that belong both to a class and a UC.
+     *
+     * @param classId Indicates the class ID.
+     * @param ucId Indicates the UC ID.
+     * @return Returns a vector of students.
+     */
     std::vector<Student> intersectClassUc(int classId, short ucId) const;
+    /**
+     * @brief Reverts an UC add.
+     * @param ptr Pointer to an UC change.
+     */
     void revertUcAdd(UcChange* ptr);
+    /**
+     * @brief Checks if the classes are balanced.
+     * @param ucId Indicates the UC ID.
+     * @param classId Indicates the class ID.
+     * @return Returns true if the classes are balanced or if the add does not make the balance worst, false otherwise.
+     */
     bool isBalanced(short ucId, int classId) const;
+    /**
+     * @brief Reverts an UC remove.
+     * @param ptr Pointer to an UC change.
+     */
     void revertUcRemove(UcChange* ptr);
+    /**
+     * @brief Uploads the file 'changes.csv'.
+     *
+     * This function reads and uploads the 'changes.csv' and changes the current information according to the stored changes.
+     */
     void readStoredChanged();
 };
 
