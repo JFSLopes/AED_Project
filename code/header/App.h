@@ -283,8 +283,9 @@ public:
      *
      * @param year The academic year for which the list of students is to be displayed.
      * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
+     * @param showMessage Indicates if it is suppose to show a message.
      */
-    void showStudentsPerYear(short year, short sortAlgotithm, bool showMessage) const;
+    void showStudentsPerYear(short year, short sortAlgorithm, bool showMessage) const;
     /**
      * @brief Displays the list of students belonging to a specific class.
      *
@@ -306,6 +307,7 @@ public:
      * This method presents a list of students enrolled in a particular UC identified by its ID.
      *
      * @param ucId The ID of the UC for which the list of students is to be displayed.
+     * @param sortAlgorithm Indicates the preferred sorting order for displaying student information.
      */
     void showStudentsPerUc(short ucId, short sortAlgorithm) const;
     /**
@@ -409,7 +411,7 @@ public:
     void showUc(short ucId) const;
     /**
      * @brief Displays the class.
-     * @param ucId Indicates the class ID.
+     * @param classId Indicates the class ID.
      */
     void showClass(int classId) const;
     /**

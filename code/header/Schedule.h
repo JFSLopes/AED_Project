@@ -41,7 +41,7 @@ public:
     /**
      * @brief gets the schedule for a certain Uc.
      *
-     * @param value Identifies an Uc.
+     * @param ucId Identifies an Uc.
      * @param s Stack that stores the Uc schedule.
      */
     void getUcSchedule(short ucId, std::stack<std::pair<Subject, std::string>>& s) const;

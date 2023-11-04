@@ -37,6 +37,7 @@ public:
      * This constructor initializes all the parameters according to the user operation request.
      *
      * @param operation Initializes parameter operation.
+     * @param upNumber Indicates the student UP number.
      * @param prev Initializes parameter prev, in case of an Add or Remove it is initialize to {0,0}.
      * @param change Initialize parameter change.
      */
@@ -90,6 +91,7 @@ public:
      * This constructor initializes all the parameters according to the user operation request.
      *
      * @param operation Initializes parameter operation.
+     * @param upNumber Indicates the student UP number.
      * @param allUc Initializes parameter allUc.
      * @param change Initializes parameter change.
      * @param prev Initializes parameter prev.

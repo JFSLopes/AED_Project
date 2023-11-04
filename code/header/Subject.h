@@ -26,7 +26,7 @@ public:
      */
     Subject(short UcId, std::string& type, float start, float duration);
     /**
-     * @bried Displays the content of this subject object.
+     * @brief Displays the content of this subject object.
      */
     void show() const;
     /**
@@ -45,7 +45,7 @@ public:
      */
     float getStartHour() const;
     /**
-     * @brief Returns the suration of this subject.
+     * @brief Returns the duration of this subject.
      * @return Return duration.
      */
     float getEndHour() const;
