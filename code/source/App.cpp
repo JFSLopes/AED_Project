@@ -1782,9 +1782,6 @@ void App::switchClassRequest(){
     }
     for(short ucId : ucStudentIsEnrolled){
         if(!isBalanced(ucId, oldClassId, false)){
-            showUc(ucId); cout << " ";
-            showClass(oldClassId);
-            cout << endl;
             cout << "Classes balance was broken or it got worst.\n";
             return;
         }
@@ -1817,9 +1814,6 @@ void App::switchClassRequest(){
                 return;
             }
             if(!isBalanced(ucId, newClassId, true)){
-                showUc(ucId); cout << " ";
-                showClass(newClassId);
-                cout << endl;
                 cout << "Classes balanced was lost or got worst.\n";
                 return;
             }
