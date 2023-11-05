@@ -1581,7 +1581,7 @@ bool App::isBalanced(short ucId, int classId, bool add) const{
 }
 
 void App::addClassRequest(){
-    ///< Indicates if the student is alreadyenrolled in the class that is being added
+    ///< Indicates if the student is already enrolled in the class that is being added
     bool alreadyHasTheClass = false;
     int upNumber = studentUpRequest(), classId = classIdRequest();
     ///< Set with all UC that are going to be added and set with UC that need to be check for conflicts.
