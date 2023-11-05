@@ -51,6 +51,7 @@ private:
      *
      * @param s Set containing the up number of students
      * @param v Vector that is going to be filled with the students
+     * @complexity O(n) where 'n' is the number of elements on the set.
      */
     void copySetOfIntToVector(const std::set<int>& s, std::vector<Student>& v) const;
     /**
@@ -60,6 +61,7 @@ private:
      *
      * @param s Set containing the Students.
      * @param v Vector that is going to be filled with the students.
+     * @complexity O(n) where 'n' is the number of elements on the set.
      */
     void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
     /**
@@ -146,6 +148,7 @@ public:
      * @brief Reads information about classes and UC from the given file and organizes the data into appropriate vectors.
      *
      * @param file An input file stream containing information about classes and UCs.
+     * @complexity O(n.log m) where n is the number of lines and m is the number of UC or classes.
      */
     void read_classes_per_uc(std::ifstream& file);
     /**
@@ -155,6 +158,7 @@ public:
      * It utilizes this information to generate schedules for each class.
      *
      * @param file Input file stream containing schedule information for UCs.
+     * @complexity O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      */
     void read_classes(std::ifstream& file);
     /**
@@ -165,6 +169,7 @@ public:
      * students and some other data structures used.
      *
      * @param file An input file stream containing data representing student.
+     * @complexity O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      */
     void read_students(std::ifstream& file);
     /**
@@ -375,10 +380,9 @@ public:
      * @brief Returns if the student can be add to a new UC.
      * @param upNumber Indicates the UP number of a student.
      * @return Return true the student has less the 7 UC, false otherwise.
+     * @complexity O(lon n).
      */
     bool isPossibleAddUc(int upNumber) const;
-
-    bool isPossibleAddClass() const;
     /**
      * @brief Check if there is a class that can accept the given student.
      *

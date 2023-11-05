@@ -160,7 +160,7 @@ void App::storeChanges(bool append){
     if(append) output.open("changes.csv", ios::app);
     else output.open("changes.csv");
     ///< Write the header
-    if(!append) output << "Type,UpNumber,Operation,{Previous},{Change}\nType,UpNumber,Operation,{ChangedUC},{Previous},{Change}\n";
+    if(!append) output << "U,UpNumber,Operation,{Previous},{Change}\nC,UpNumber,Operation,{ChangedUC},{Previous},{Change}\n";
     stack<Change*> reverse;
     while(!requests.isEmpty()){
         reverse.push(requests.top());
@@ -1572,10 +1572,10 @@ bool App::isBalanced(short ucId, int classId, bool add) const{
     if(max - min <= 4) return true;
     if(add) {
         ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
-        if (!((int) intersectClassUc(classId, ucId).size() + 1 == max)) return true;
+        if (!(int) intersectClassUc(classId, ucId).size() + 1 == max) return true;
     }
     else{
-        if(!((int) intersectClassUc(classId, ucId).size() - 1 == min)) return true;
+        if(!(int) intersectClassUc(classId, ucId).size() - 1 == min) return true;
     }
     return false;
 }
