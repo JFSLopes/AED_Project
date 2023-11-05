@@ -442,9 +442,10 @@ public:
      * @brief Checks if the classes are balanced.
      * @param ucId Indicates the UC ID.
      * @param classId Indicates the class ID.
+     * @param add Indicates if the operation is an add if true or a remove if false.
      * @return Returns true if the classes are balanced or if the add does not make the balance worst, false otherwise.
      */
-    bool isBalanced(short ucId, int classId) const;
+    bool isBalanced(short ucId, int classId, bool add) const;
     /**
      * @brief Reverts an UC remove.
      * @param ptr Pointer to an UC change.
@@ -456,6 +457,64 @@ public:
      * This function reads and uploads the 'changes.csv' and changes the current information according to the stored changes.
      */
     void readStoredChanged();
+    /**
+     * @brief Tries to add a class to a student.
+     *
+     * This function is going to add all the UC from a given class that the student does have yet, if possible.
+     */
+    void addClassRequest();
+    /**
+     * @brief Tries to remove a class from a student.
+     *
+     * This function is going to remove all UC from the student schedule that belong to the class that is being erased.
+     */
+    void removeClassRequest();
+    /**
+     * @brief Tries to switch classes in a student.
+     *
+     * This function is going to replace all UCs from the student schedule that belong to the class that is being erased
+     * for the sames UCs from another class.
+     */
+    void switchClassRequest();
+    /**
+     * @brief Reverts a class add.
+     * @param ptr Pointer to a class change.
+     */
+    void revertClassAdd(ClassChange* ptr);
+    /**
+     * @brief Reverts a class remove.
+     * @param ptr Pointer to a class change.
+     */
+    void revertClassRemove(ClassChange* ptr);
+    /**
+     * @brief Reverts a class switch.
+     * @param ptr Pointer to a class change.
+     */
+    void revertClassSwitch(ClassChange* ptr);
+    /**
+     * @brief Uploads a class change.
+     *
+     * This functions uploads the changes contained in the class change related to a switch without creating a new change.
+     *
+     * @param change Class change that is being uploaded.
+     */
+    void uploadClassAdd(ClassChange change);
+    /**
+     * @brief Uploads a class change.
+     *
+     * This functions uploads the changes contained in the class change related to a switch without creating a new change.
+     *
+     * @param change Class change that is being uploaded.
+     */
+    void uploadClassRemove(ClassChange change);
+    /**
+     * @brief Uploads a class change.
+     *
+     * This functions uploads the changes contained in the class change related to a switch without creating a new change.
+     *
+     * @param change Class change that is being uploaded.
+     */
+    void uploadClassSwitch(ClassChange change);
 };
 
 #endif //AED_PROJECT_APP_H

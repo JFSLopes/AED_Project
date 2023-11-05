@@ -63,19 +63,19 @@ void ClassChange::showChange() const{
     switch (operation){
         case 1: {
             cout << "\tAdded UC { ";
-            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x << " ";
+            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x%100 << " ";
             cout << "} from class " << change/100 << "LEIC" << right << setw(2) << setfill('0') << change%100;
             break;
         }
         case 2: {
             cout << "\tRemoved UC { ";
-            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x << " ";
+            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x%100 << " ";
             cout << "} from class " << change/100 << "LEIC" << right << setw(2) << setfill('0') << change%100;
             break;
         }
         case 3: {
             cout << "\tSwitched UC { ";
-            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x << " ";
+            for(int x : allUc) cout << (x > 100 ? "UP" : "L.EIC") << right << setw(3) << setfill('0') << x%100 << " ";
             cout << "} from class " << prev/100 << "LEIC" << right << setw(2) << setfill('0') << prev%100 << "to class "
                  << change/100 << "LEIC" << right << setw(2) << setfill('0') << change%100;
             break;

@@ -39,7 +39,7 @@ public:
      * this method erases the most recent change. If the stack is empty, no action is taken.
      * It displays a message informing the user about the performed action.
      */
-    void pop();
+    void pop(bool delete_);
     /**
      * @brief Returns a pointer to the element on the top of the stack in case it exists.
      * @return Returns a pointer to the element on the top of the stack, aka, most recent change

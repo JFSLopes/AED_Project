@@ -16,7 +16,8 @@ void App::readStoredChanged(){
     getline(in, line);
     while(getline(in, line)){
         short operation;
-        int upNumber, pos = 0;
+        int upNumber, pos = 15, oldClassId, newClassId;
+        list<short> allUc;
         pair<int, short> prev, change;
         if(line[0] == 'U'){
             operation = line[12] - '0';
@@ -36,7 +37,22 @@ void App::readStoredChanged(){
             }
         }
         else{
-
+            operation = line[12] - '0';
+            upNumber = stoi(line.substr(2,9));
+            ///< Read the UC
+            while(true){
+                if(!(line[pos] >= '0' and line[pos] <= '9'))
+                    break;
+                else allUc.push_back(stoi(line.substr(pos,3)));
+                pos+=4;
+            }
+            pos+=2;
+            oldClassId = stoi(line.substr(pos,3));
+            newClassId = stoi(line.substr(pos+6,3));
+            ClassChange classChange(operation, upNumber, allUc, oldClassId, newClassId);
+            if(operation == 1) uploadClassAdd(classChange);
+            else if(operation == 1) uploadClassRemove(classChange);
+            else uploadClassSwitch(classChange);
         }
     }
     cout << "Completed loading changes.\n";
@@ -144,11 +160,11 @@ void App::storeChanges(bool append){
     if(append) output.open("changes.csv", ios::app);
     else output.open("changes.csv");
     ///< Write the header
-    if(!append) output << "Type,UpNumber,Operation,{Previous},{Change}\nType,UpNumber,{ChangedUC},{Previous},{Change}\n";
+    if(!append) output << "Type,UpNumber,Operation,{Previous},{Change}\nType,UpNumber,Operation,{ChangedUC},{Previous},{Change}\n";
     stack<Change*> reverse;
     while(!requests.isEmpty()){
         reverse.push(requests.top());
-        requests.pop();
+        requests.pop(false);
     }
     while(!reverse.empty()){
         auto ptr = dynamic_cast<UcChange*>(reverse.top());
@@ -159,12 +175,12 @@ void App::storeChanges(bool append){
         else{
             auto ptr1 = dynamic_cast<ClassChange*>(reverse.top());
             output << "C," << ptr1->getStudent() << "," << ptr1->getOperation() << ",{";
-            list<short> l;
+            list<short> l = ptr1->getUc();
             for(auto itr = l.begin(); itr != l.end(); itr++){
-                if(itr == --l.end()) cout << *itr << "},";
-                else cout << *itr << ",";
+                if(itr == --l.end()) output << right << setw(3) << setfill('0') << *itr << "},";
+                else output << right << setw(3) << setfill('0') << *itr << ",";
             }
-            output << "{" << ptr1->getPrev() << "},{" << ptr1->getChange() << "}\n";
+            output << "{" << right << setw(3) << setfill('0') << ptr1->getPrev() << "},{" << ptr1->getChange() << "}\n";
         }
         delete reverse.top();
         reverse.pop();
@@ -1217,7 +1233,7 @@ int App::classWithVacancy(short ucId, int upNumber){
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
                     vClass1[classId % 100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(isBalanced(ucId, classId)){
+                    if(isBalanced(ucId, classId, true)){
                         if (!conflict(upNumber, s)) {
                             vClass1[classId%100 - 1].addStudent(upNumber);
                             return classId;
@@ -1232,7 +1248,7 @@ int App::classWithVacancy(short ucId, int upNumber){
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
                     vClass2[classId%100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(isBalanced(ucId, classId)){
+                    if(isBalanced(ucId, classId, true)){
                         if (!conflict(upNumber, s)) {
                             vClass2[classId%100 - 1].addStudent(upNumber);
                             return classId;
@@ -1247,7 +1263,7 @@ int App::classWithVacancy(short ucId, int upNumber){
                     ///< Tests in case the student is added if there is no conflict
                     stack<pair<Subject, string>> s;
                     vClass3[classId%100 - 1].getUcScheduleFromSchedule(ucId, s);
-                    if(isBalanced(ucId, classId)){
+                    if(isBalanced(ucId, classId, true)){
                         if (!conflict(upNumber, s)) {
                             vClass3[classId%100 - 1].addStudent(upNumber);
                             return classId;
@@ -1291,10 +1307,6 @@ void App::showClass(int classId) const{
 }
 
 void App::classChangeOperation(){
-    ///< checkUc -> diz se tem a UC
-    ///< Uc.h -> getClasses
-    ///< class.h -> getUcScheduleFromSchedule(ucId, stack que vai ser preenchida)
-    ///< conflict(aluno, stack) -> vê se  existe conflito entre o horário do aluno e da Uc.
     while (true){
         string input;
         display.showchangeoptions(1);
@@ -1302,21 +1314,15 @@ void App::classChangeOperation(){
         short option = singleNumberRequest(input);
         switch (option) {
             case 1: {
-                int upNumber = studentUpRequest();
-                int classId = classIdRequest();
+                addClassRequest();
                 break;
             }
             case 2: {
-                int upNumber = studentUpRequest();
-                int classId = classIdRequest();
+                removeClassRequest();
                 break;
             }
             case 3:{
-                int upNumber = studentUpRequest();
-                cout << "Choose the one to be removed. ";
-                int classId = classIdRequest();
-                cout << "Choose the one to be added. ";
-                int classId1 = classIdRequest();
+                switchClassRequest();
                 break;
             }
             case 4:
@@ -1469,15 +1475,21 @@ void App::undoChange(){
     if(ptr != nullptr){
         if(ptr->getOperation() == 1) revertUcAdd(ptr);
         else if(ptr->getOperation() == 2) revertUcRemove(ptr);
-        else{
+        else {
             ///< First removes and then add.
             revertUcAdd(ptr);
             ///< Needs to change the value on the prev to the change
             ptr->setChange(ptr->getPrev());
             revertUcRemove(ptr);
         }
-        requests.pop();
     }
+    ClassChange* ptr1 = dynamic_cast<ClassChange*>(requests.top());
+    if(ptr1 != nullptr){
+        if(ptr1->getOperation() == 1) revertClassAdd(ptr1);
+        else if(ptr1->getOperation() == 2) revertClassRemove(ptr1);
+        else revertClassSwitch(ptr1);
+    }
+    requests.pop(true);
 }
 
 void App::revertUcAdd(UcChange *ptr){
@@ -1544,28 +1556,505 @@ void App::revertUcRemove(UcChange *ptr){
     students.insert(student);
 }
 
-bool App::isBalanced(short ucId, int classId) const{
+bool App::isBalanced(short ucId, int classId, bool add) const{
     set<int> sClasses = (ucId > 100 ? vUp.find(ucId)->getClasses() : vUc.find(ucId)->getClasses());
     int max = INT_MIN;
-    vector<int> classesWithMax;
     int min = INT_MAX;
     ///< finds the class with more and less students for that UC
     for(int x : sClasses){
         int numberOfStudents = (int) intersectClassUc(x, ucId).size();
-        if(classId == x) numberOfStudents+=1;
+        if(add and x == classId) numberOfStudents+=1;
+        if(!add and x == classId) numberOfStudents-=1;
         if(max < numberOfStudents) max = numberOfStudents;
         if(min > numberOfStudents) min = numberOfStudents;
     }
-    ///< Adds the classes with greater occupation
-    for(int x : sClasses){
-        int temp = (int) intersectClassUc(x, ucId).size();
-        if(x == classId) temp+=1;
-        if(temp == max) classesWithMax.push_back(x);
-    }
     ///< It is balanced
     if(max - min <= 4) return true;
-    ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
-    if(find(classesWithMax.begin(), classesWithMax.end(), classId) == classesWithMax.end()) return true;
+    if(add) {
+        ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
+        if (!((int) intersectClassUc(classId, ucId).size() + 1 == max)) return true;
+    }
+    else{
+        if(!((int) intersectClassUc(classId, ucId).size() - 1 == min)) return true;
+    }
     return false;
 }
 
+void App::addClassRequest(){
+    ///< Indicates if the student is alreadyenrolled in the class that is being added
+    bool alreadyHasTheClass = false;
+    int upNumber = studentUpRequest(), classId = classIdRequest();
+    ///< Set with all UC that are going to be added and set with UC that need to be check for conflicts.
+    set<short> allUc, ucToTest;
+    if(classId/100 == 1) allUc = vClass1[classId%100 - 1].getUc();
+    else if(classId/100 == 2) allUc = vClass2[classId%100 - 1].getUc();
+    else allUc = vClass3[classId%100 - 1].getUc();
+    auto itr = students.find(upNumber);
+    for(short ucId : allUc) {
+        ///< Verify if the student already as any of this UCs. If he does that UC is going to stay the same.
+        if (itr->checkUc(ucId)){
+            ///< Check if the students already has the class_uc pair.
+            if (itr->class_uc(classId, ucId)){
+                alreadyHasTheClass = true;
+            }
+            continue;
+        }
+        ucToTest.insert(ucId);
+    }
+    ///< Check if the class has vacancies, there is no conflict and it will keep the balance.
+    for(short ucId : ucToTest){
+        if(classId/100 == 1){
+            ///< Check if the student cannot be added.
+            if(!vClass1[classId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(classId, ucId).size())){
+                cout << "Class is already full.\n";
+                return;
+            }
+            ///< Check if it will not be balanced.
+            if(!isBalanced(ucId, classId, true)){
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            ///< Checks for schedules conflicts
+            stack<pair<Subject,string>> s;
+            vClass1[classId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+        else if(classId/100 == 2){
+            if(!vClass2[classId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(classId, ucId).size())){
+                cout << "Class is already full.\n";
+                return;
+            }
+            if(!isBalanced(ucId, classId, true)){
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            stack<pair<Subject,string>> s;
+            vClass2[classId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+        else{
+            if(!vClass3[classId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(classId, ucId).size())){
+                cout << "Class is already full.\n";
+                return;
+            }
+            if(!isBalanced(ucId, classId, true)){
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            stack<pair<Subject,string>> s;
+            vClass3[classId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+    }
+
+    ///< Getting here means that might be possible to add the class.
+    if(itr->getNumberOfUc() + (int)ucToTest.size() > 7){
+        cout << "Error. The student would have more than 7 UC.\n";
+        return;
+    }
+    ///< Getting here mean that is possible to add the class
+    if(!alreadyHasTheClass){
+        if(classId/100 == 1) vClass1[classId%100 - 1].addStudent(upNumber);
+        else if(classId/100 == 2) vClass2[classId%100 - 1].addStudent(upNumber);
+        else vClass3[classId%100 - 1].addStudent(upNumber);
+    }
+    list<short> l;
+    ///< Add the student to the new UC
+    for(short ucId : ucToTest){
+        l.push_back(ucId);
+        if(ucId > 100){
+            auto itr = vUp.find(ucId);
+            Uc uc = *itr;
+            uc.addStudent(upNumber);
+            vUp.erase(itr);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr = vUc.find(ucId);
+            Uc uc = *itr;
+            uc.addStudent(upNumber);
+            vUc.erase(itr);
+            vUc.insert(uc);
+        }
+        ///< Inserts the pair to the student schedule.
+        auto itr1 = students.find(upNumber);
+        Student student = *itr1;
+        student.setclass_uc(make_pair(classId, ucId));
+        students.erase(itr1);
+        students.insert(student);
+    }
+    if(l.size() != 0){
+        Change* change = new ClassChange(1,upNumber, l, 0, classId);
+        requests.addStack(change);
+        change->showChange();
+    }
+    else{
+        ///< In case the user tries to add a class where nothing is going to be added.
+        cout << "No change was made.\n";
+    }
+}
+
+void App::removeClassRequest(){
+    int upNumber = studentUpRequest(), classId = classIdRequest();
+    auto itr = students.find(upNumber);
+    list<pair<int, short>> l = itr->getList();
+    list<short> ucStudentIsEnrolled;
+    ///< Gets the UC that are going to be removed.
+    for(auto class_uc : l) {
+        if (class_uc.first == classId) ucStudentIsEnrolled.push_back(class_uc.second);
+    }
+    if(ucStudentIsEnrolled.size() == 0){
+        cout << "Student is not enrolled in class "; showClass(classId); cout << '\n';
+        return;
+    }
+    for(short ucId : ucStudentIsEnrolled){
+        if(!isBalanced(ucId, classId, false)){
+            cout << "Classes balance was broken or it got worst.\n";
+            return;
+        }
+    }
+    ///< It is possible to remove.
+    for(short ucId : ucStudentIsEnrolled){
+        ///< remove the student from the UC.
+        if(ucId > 100){
+            auto itr = vUp.find(ucId);
+            Uc uc = *itr;
+            uc.removeStudent(upNumber);
+            vUp.erase(ucId);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr = vUc.find(ucId);
+            Uc uc = *itr;
+            uc.removeStudent(upNumber);
+            vUc.erase(ucId);
+            vUc.insert(uc);
+        }
+        ///< remove class_uc from schedule.
+        auto itr = students.find(upNumber);
+        Student student = *itr;
+        student.removeUc(ucId);
+        students.erase(itr);
+        students.insert(student);
+    }
+    ///< Remove the student from the class.
+    if(classId/100 == 1) vClass1[classId%100 - 1].removeStudent(upNumber);
+    else if(classId/100 == 2) vClass2[classId%100 - 1].removeStudent(upNumber);
+    else vClass3[classId%100 - 1].removeStudent(upNumber);
+
+    Change* change = new ClassChange(2, upNumber, ucStudentIsEnrolled, 0, classId);
+    requests.addStack(change);
+    change->showChange();
+}
+
+void App::switchClassRequest(){
+    int upNumber = studentUpRequest();
+    cout << "Choose the class you want to change. ";
+    int oldClassId = classIdRequest();
+    cout << "Choose the class that is going to replace the current one. ";
+    int newClassId = classIdRequest();
+
+    if(newClassId/100 != oldClassId/100){
+        cout << "Classes must be from the same year.\n";
+        return;
+    }
+
+    ///< check if it is possible to remove the class.
+    auto itr = students.find(upNumber);
+    list<pair<int, short>> l = itr->getList();
+    list<short> ucStudentIsEnrolled;
+    ///< Gets the UCs that are going to be removed.
+    for(auto class_uc : l) {
+        if (class_uc.first == oldClassId) ucStudentIsEnrolled.push_back(class_uc.second);
+    }
+    if(ucStudentIsEnrolled.size() == 0){
+        cout << "Student is not enrolled in class "; showClass(oldClassId); cout << '\n';
+        return;
+    }
+    for(short ucId : ucStudentIsEnrolled){
+        if(!isBalanced(ucId, oldClassId, false)){
+            showUc(ucId); cout << " ";
+            showClass(oldClassId);
+            cout << endl;
+            cout << "Classes balance was broken or it got worst.\n";
+            return;
+        }
+    }
+    ///< check if the new class can be added
+    ///< Check if the class has vacancies, there is no conflict and it will keep the balance.
+    for(short ucId : ucStudentIsEnrolled){
+        if(newClassId/100 == 1){
+            ///< Check if the student cannot be added.
+            if(!(vClass1[newClassId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(newClassId, ucId).size()))){
+                cout << "Class is already full.\n";
+                return;
+            }
+            ///< Check if it will not be balanced.
+            if(!isBalanced(ucId, newClassId, true)){
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            ///< Checks for schedules conflicts
+            stack<pair<Subject,string>> s;
+            vClass1[newClassId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+        else if(newClassId/100 == 2){
+            if(!vClass2[newClassId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(newClassId, ucId).size())){
+                cout << "Class is already full.\n";
+                return;
+            }
+            if(!isBalanced(ucId, newClassId, true)){
+                showUc(ucId); cout << " ";
+                showClass(newClassId);
+                cout << endl;
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            stack<pair<Subject,string>> s;
+            vClass2[newClassId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+        else{
+            if(!vClass3[newClassId%100 - 1].isPossibleAddStudent( (int) intersectClassUc(newClassId, ucId).size())){
+                cout << "Class is already full.\n";
+                return;
+            }
+            if(!isBalanced(ucId, newClassId, true)){
+                cout << "Classes balanced was lost or got worst.\n";
+                return;
+            }
+            stack<pair<Subject,string>> s;
+            vClass3[newClassId%100 - 1].getUcScheduleFromSchedule(ucId,s);
+            if(conflict(upNumber, s)){
+                cout << "There was schedule conflicts.\n";
+                return;
+            }
+        }
+    }
+    ///< Getting her mean that we can switch.
+    ///< Remove from the old class and add to the new
+    if(oldClassId/100 == 1){
+        vClass1[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass1[newClassId%100 - 1].addStudent(upNumber);
+    }
+    else if(oldClassId/100 == 1){
+        vClass2[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass2[newClassId%100 - 1].addStudent(upNumber);
+    }
+    else{
+        vClass3[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass3[newClassId%100 - 1].addStudent(upNumber);
+    }
+    ///< Remove the old class_uc and add the new ones.
+    for(short ucId : ucStudentIsEnrolled){
+        auto itr = students.find(upNumber);
+        Student student = *itr;
+        student.removeUc(ucId);
+        student.setclass_uc(make_pair(newClassId, ucId));
+        students.erase(itr);
+        students.insert(student);
+    }
+    Change* change = new ClassChange(3, upNumber, ucStudentIsEnrolled, oldClassId, newClassId);
+    requests.addStack(change);
+    change->showChange();
+}
+
+void App::revertClassAdd(ClassChange *ptr){
+    int upNumber  = ptr->getStudent();
+    int classId = ptr->getChange();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    list<short> addedUc = ptr->getUc();
+    ///< Removes the class_uc from schedule and the students from the UC
+    for(short ucId : addedUc){
+        if(ucId > 100){
+            auto itr1 = vUp.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUp.erase(itr1);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr1 = vUc.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUc.erase(itr1);
+            vUc.insert(uc);
+        }
+        student.removeUc(ucId);
+    }
+    students.erase(itr);
+    students.insert(student);
+    ///< Removes the student if needed.
+    if(student.checkClass(classId) != -1){
+        if(classId/100 == 1) vClass1[classId%100 - 1].removeStudent(upNumber);
+        else if(classId/100 == 2) vClass2[classId%100 - 1].removeStudent(upNumber);
+        else vClass3[classId%100 - 1].removeStudent(upNumber);
+    }
+}
+
+void App::revertClassRemove(ClassChange *ptr){
+    int upNumber  = ptr->getStudent(), classId = ptr->getChange();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    list<short> removedUc = ptr->getUc();
+    ///< Add the student to the class
+    if(classId/100 == 1) vClass1[classId%100 - 1].addStudent(upNumber);
+    else if(classId/100 == 2) vClass2[classId%100 - 1].addStudent(upNumber);
+    else vClass3[classId%100 - 1].addStudent(upNumber);
+
+    ///< Add class_uc to schedule and students to the UC
+    for(short ucId : removedUc){
+        if(ucId > 100){
+            auto itr1 = vUp.find(ucId);
+            Uc uc = *itr1;
+            uc.addStudent(upNumber);
+            vUp.erase(itr1);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr1 = vUc.find(ucId);
+            Uc uc = *itr1;
+            uc.addStudent(upNumber);
+            vUc.erase(itr1);
+            vUc.insert(uc);
+        }
+        student.setclass_uc(make_pair(classId, ucId));
+    }
+    students.erase(itr);
+    students.insert(student);
+}
+
+void App::revertClassSwitch(ClassChange *ptr){
+    int upNumber  = ptr->getStudent(), newClassId = ptr->getChange(), oldClassId = ptr->getPrev();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    list<short> switchedUc = ptr->getUc();
+    ///< Removes the old class_uc and adds the new ones.
+    for(short ucId : switchedUc){
+        student.removeUc(ucId);
+        student.setclass_uc(make_pair(oldClassId, ucId));
+    }
+    students.erase(itr);
+    students.insert(student);
+    ///< Add the student to the class.
+    if(newClassId/100 == 1) {
+        vClass1[oldClassId%100 - 1].addStudent(upNumber);
+        if(student.checkClass(newClassId) != -1) vClass1[newClassId%100 - 1].removeStudent(upNumber);
+    }
+    else if(newClassId/100 == 2){
+        vClass2[oldClassId%100 - 1].addStudent(upNumber);
+        if(student.checkClass(newClassId) != -1) vClass2[newClassId%100 - 1].removeStudent(upNumber);
+    }
+    else{
+        vClass3[oldClassId%100 - 1].addStudent(upNumber);
+        if(student.checkClass(newClassId) != -1) vClass3[newClassId%100 - 1].removeStudent(upNumber);
+    }
+}
+
+void App::uploadClassAdd(ClassChange change){
+    int classId = change.getChange(), upNumber = change.getStudent();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    if(itr->checkClass(change.getChange()) != - 1){
+        if(classId/100 == 1) vClass1[classId%100 - 1].addStudent(upNumber);
+        else if(classId/100 == 2) vClass2[classId%100 - 1].addStudent(upNumber);
+        else vClass3[classId%100 - 1].addStudent(upNumber);
+    }
+    list<short> l = change.getUc();
+    ///< Add the student to the new UC
+    for(short ucId : l){
+        if(ucId > 100){
+            auto itr = vUp.find(ucId);
+            Uc uc = *itr;
+            uc.addStudent(upNumber);
+            vUp.erase(itr);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr = vUc.find(ucId);
+            Uc uc = *itr;
+            uc.addStudent(upNumber);
+            vUc.erase(itr);
+            vUc.insert(uc);
+        }
+        ///< Inserts the pair to the student schedule.
+        student.setclass_uc(make_pair(classId, ucId));
+    }
+    students.erase(itr);
+    students.insert(student);
+}
+
+void App::uploadClassRemove(ClassChange change){
+    int classId = change.getChange(), upNumber = change.getStudent();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    list<short> l = change.getUc();
+    for(short ucId : l){
+        ///< remove the student from the UC.
+        if(ucId > 100){
+            auto itr1 = vUp.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUp.erase(ucId);
+            vUp.insert(uc);
+        }
+        else{
+            auto itr1 = vUc.find(ucId);
+            Uc uc = *itr1;
+            uc.removeStudent(upNumber);
+            vUc.erase(ucId);
+            vUc.insert(uc);
+        }
+        ///< remove class_uc from schedule.
+        student.removeUc(ucId);
+    }
+    students.erase(itr);
+    students.insert(student);
+    ///< Remove the student from the class.
+    if(classId/100 == 1) vClass1[classId%100 - 1].removeStudent(upNumber);
+    else if(classId/100 == 2) vClass2[classId%100 - 1].removeStudent(upNumber);
+    else vClass3[classId%100 - 1].removeStudent(upNumber);
+}
+
+void App::uploadClassSwitch(ClassChange change){
+    int oldClassId = change.getPrev(), newClassId = change.getChange(), upNumber = change.getStudent();
+    auto itr = students.find(upNumber);
+    Student student = *itr;
+    list<short> l = change.getUc();
+    if(oldClassId/100 == 1){
+        vClass1[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass1[newClassId%100 - 1].addStudent(upNumber);
+    }
+    else if(oldClassId/100 == 1){
+        vClass2[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass2[newClassId%100 - 1].addStudent(upNumber);
+    }
+    else{
+        vClass3[oldClassId%100 - 1].removeStudent(upNumber);
+        if(itr->checkClass(newClassId) != -1) vClass3[newClassId%100 - 1].addStudent(upNumber);
+    }
+    ///< Remove the old class_uc and add the new ones.
+    for(short ucId : l){
+        student.removeUc(ucId);
+        student.setclass_uc(make_pair(newClassId, ucId));
+    }
+    students.erase(itr);
+    students.insert(student);
+}
