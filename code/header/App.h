@@ -48,20 +48,20 @@ private:
      * @brief Copies a set to a vector.
      *
      * Receives a set of UP numbers and fills a vector with the students related to the UP numbers on the set.
+     * O(n) where 'n' is the number of elements on the set.
      *
      * @param s Set containing the up number of students
      * @param v Vector that is going to be filled with the students
-     * @complexity O(n) where 'n' is the number of elements on the set.
      */
     void copySetOfIntToVector(const std::set<int>& s, std::vector<Student>& v) const;
     /**
      * @brief Copies a set to a vector.
      *
      * Receives a set of students and fills a vector with the students from the set.
+     * O(n) where 'n' is the number of elements on the set.
      *
      * @param s Set containing the Students.
      * @param v Vector that is going to be filled with the students.
-     * @complexity O(n) where 'n' is the number of elements on the set.
      */
     void copySetOfStudentsToVector(const std::set<Student>& s, std::vector<Student>& v) const;
     /**
@@ -147,8 +147,9 @@ public:
     /**
      * @brief Reads information about classes and UC from the given file and organizes the data into appropriate vectors.
      *
+     * O(n.log m) where n is the number of lines and m is the number of UC or classes.
+     *
      * @param file An input file stream containing information about classes and UCs.
-     * @complexity O(n.log m) where n is the number of lines and m is the number of UC or classes.
      */
     void read_classes_per_uc(std::ifstream& file);
     /**
@@ -156,9 +157,9 @@ public:
      *
      * This method reads schedule data for classes from the given input file stream, including start and end hour, weekdays, and corresponding UC.
      * It utilizes this information to generate schedules for each class.
+     * O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      *
      * @param file Input file stream containing schedule information for UCs.
-     * @complexity O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      */
     void read_classes(std::ifstream& file);
     /**
@@ -167,9 +168,9 @@ public:
      * This function reads information line by line from the given file. Each line contains a student ID, their
      * name, and the respective UC/Class they are enrolled in. It processes this information to update records related to
      * students and some other data structures used.
+     * O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      *
      * @param file An input file stream containing data representing student.
-     * @complexity O(n.log m) where 'n' is the number of lines and 'm' is the number of UCs.
      */
     void read_students(std::ifstream& file);
     /**
@@ -378,9 +379,11 @@ public:
     void showUcSchedule(short ucId) const;
     /**
      * @brief Returns if the student can be add to a new UC.
+     *
+     * O(log n), where n is the number of UC the student has.
+     *
      * @param upNumber Indicates the UP number of a student.
      * @return Return true the student has less the 7 UC, false otherwise.
-     * @complexity O(lon n).
      */
     bool isPossibleAddUc(int upNumber) const;
     /**

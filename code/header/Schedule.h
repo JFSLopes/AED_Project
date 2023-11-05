@@ -52,6 +52,9 @@ public:
     void getUc(std::set<short>& s) const;
     /**
      * @brief checks if there is a conflict between schedules.
+     *
+     * O(n.m), where 'n' is the number of elements on the stack and 'm' is the number of subjects in the given weekday.
+     *
      * @param s schedule that is gonna be compared to check conflicts.
      * @return returns true if there was conflicts between schedules, false otherwise.
      */

@@ -47,6 +47,8 @@ public:
     Change* top() const;
     /**
      * @brief Deallocates all the dynamic memory used to store the changes
+     *
+     * O(n), where 'n' is the number of changes.
      */
     void clean();
 };

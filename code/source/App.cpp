@@ -51,7 +51,7 @@ void App::readStoredChanged(){
             newClassId = stoi(line.substr(pos+6,3));
             ClassChange classChange(operation, upNumber, allUc, oldClassId, newClassId);
             if(operation == 1) uploadClassAdd(classChange);
-            else if(operation == 1) uploadClassRemove(classChange);
+            else if(operation == 2) uploadClassRemove(classChange);
             else uploadClassSwitch(classChange);
         }
     }
@@ -1572,10 +1572,10 @@ bool App::isBalanced(short ucId, int classId, bool add) const{
     if(max - min <= 4) return true;
     if(add) {
         ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
-        if (!(int) intersectClassUc(classId, ucId).size() + 1 == max) return true;
+        if ((int) intersectClassUc(classId, ucId).size() + 1 != max) return true;
     }
     else{
-        if(!(int) intersectClassUc(classId, ucId).size() - 1 == min) return true;
+        if((int) intersectClassUc(classId, ucId).size() - 1 != min) return true;
     }
     return false;
 }
@@ -1782,9 +1782,6 @@ void App::switchClassRequest(){
     }
     for(short ucId : ucStudentIsEnrolled){
         if(!isBalanced(ucId, oldClassId, false)){
-            showUc(ucId); cout << " ";
-            showClass(oldClassId);
-            cout << endl;
             cout << "Classes balance was broken or it got worst.\n";
             return;
         }
@@ -1817,9 +1814,6 @@ void App::switchClassRequest(){
                 return;
             }
             if(!isBalanced(ucId, newClassId, true)){
-                showUc(ucId); cout << " ";
-                showClass(newClassId);
-                cout << endl;
                 cout << "Classes balanced was lost or got worst.\n";
                 return;
             }

@@ -149,6 +149,9 @@ public:
     bool checkUc(short ucId) const;
     /**
      * @brief This function checks if the student has a given class.
+     *
+     * O(n), where n is the number of pairs class_uc.
+     *
      * @param classId Indicates the class ID.
      * @return Returns -1 the student has the class or the same class ID otherwise.
      */
