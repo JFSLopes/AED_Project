@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['getalluc_0',['getAllUc',['../class_schedule.html#aa5ef6bff37b01ae8ebdcb4b96a7fea9a',1,'Schedule']]],
+  ['getchange_1',['getchange',['../class_uc_change.html#ac12692963822a6a5dc16a82e4c06a9cd',1,'UcChange::getChange()'],['../class_class_change.html#a16e90eeaccd976b69d664415f3385a90',1,'ClassChange::getChange()']]],
+  ['getclass_2',['getClass',['../class_student.html#ac01d0e1bbbd05ac0adddb71889bcc037',1,'Student']]],
+  ['getclasses_3',['getClasses',['../class_uc.html#ae5ad9e00cf425752d700fcb08240d973',1,'Uc']]],
+  ['getendhour_4',['getEndHour',['../class_subject.html#a23804a1e8257c59373da0a01d9f2a35e',1,'Subject']]],
+  ['getid_5',['getId',['../class_uc.html#a96f232d2a33af8a4cfd4525fbb5e9e40',1,'Uc']]],
+  ['getlist_6',['getList',['../class_student.html#a9ef75a624da592b57e766f7504269586',1,'Student']]],
+  ['getname_7',['getName',['../class_student.html#af2b671e64af8a240f59652414a8b8047',1,'Student']]],
+  ['getnumberofstudents_8',['getNumberOfStudents',['../class_class.html#a01e2460833efd2a2fe4b99a73dcdd2bb',1,'Class']]],
+  ['getnumberofstudentsinclass_9',['getNumberOfStudentsInClass',['../class_app.html#a1c71f7e8965ecbd5f0e9166ca33de184',1,'App']]],
+  ['getnumberofuc_10',['getNumberOfUc',['../class_student.html#affd61110b826b0fbf145be3621e4d6e8',1,'Student']]],
+  ['getoperation_11',['getoperation',['../class_uc_change.html#a77bcb27365cb1ab2bb6d1e93a7e1975b',1,'UcChange::getOperation()'],['../class_class_change.html#afdf551c9846d4906bc0c6162788fedf9',1,'ClassChange::getOperation()']]],
+  ['getprev_12',['getprev',['../class_uc_change.html#a5281c2b8b86f3cb8b57216ede61f0690',1,'UcChange::getPrev()'],['../class_class_change.html#a203f5a83e11a699962c8b3367efd438b',1,'ClassChange::getPrev()']]],
+  ['getstarthour_13',['getStartHour',['../class_subject.html#a4f652df454dee95117537cbba60f74fb',1,'Subject']]],
+  ['getstudent_14',['getstudent',['../class_uc_change.html#a4e8ed027176b6be31bf5a15f0666bb70',1,'UcChange::getStudent()'],['../class_class_change.html#a06f06a7113794992ef14b5b6973015cf',1,'ClassChange::getStudent()']]],
+  ['getstudents_15',['getstudents',['../class_class.html#a1ecc4fad7c748292870397390c6547aa',1,'Class::getStudents()'],['../class_uc.html#a082ff2048901d710d548bdb025f12a5a',1,'Uc::getStudents()']]],
+  ['gettype_16',['getType',['../class_subject.html#ae35cca35f3d55adc66a08297be95055b',1,'Subject']]],
+  ['getuc_17',['getuc',['../class_class_change.html#a86c1e6be16138e75b5808b048285cb49',1,'ClassChange::getUc()'],['../class_class.html#afd226a42a57a8ef1988b46b11ec1291b',1,'Class::getUc()'],['../class_schedule.html#afb8a7b3caa6dd9776c4d05ca0fb30bf5',1,'Schedule::getUc()']]],
+  ['getucnumber_18',['getUcNumber',['../class_subject.html#a6b9fbdfe063cdeea106352f1ac9f61a0',1,'Subject']]],
+  ['getucschedule_19',['getUcSchedule',['../class_schedule.html#a6483a66b79ea179c78bd2768e3678f1e',1,'Schedule']]],
+  ['getucschedulefromschedule_20',['getUcScheduleFromSchedule',['../class_class.html#afdc7e5ad0ceff938e44826b8cfe6c413',1,'Class']]],
+  ['getupnumber_21',['getUpNumber',['../class_student.html#a218f258d702fc32c449dd7a235b9c2b0',1,'Student']]]
+];
