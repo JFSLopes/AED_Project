@@ -1563,8 +1563,6 @@ bool App::isBalanced(short ucId, int classId, bool add) const{
     ///< finds the class with more and less students for that UC
     for(int x : sClasses){
         int numberOfStudents = (int) intersectClassUc(x, ucId).size();
-        if(add and x == classId) numberOfStudents+=1;
-        if(!add and x == classId) numberOfStudents-=1;
         if(max < numberOfStudents) max = numberOfStudents;
         if(min > numberOfStudents) min = numberOfStudents;
     }
@@ -1572,10 +1570,10 @@ bool App::isBalanced(short ucId, int classId, bool add) const{
     if(max - min <= 4) return true;
     if(add) {
         ///< In case it is already unbalance, if it does not get worst, it adds the student. It only gets worst if it adds to the classes that have more students
-        if ((int) intersectClassUc(classId, ucId).size() + 1 != max) return true;
+        if ((int) intersectClassUc(classId, ucId).size() != max) return true;
     }
     else{
-        if((int) intersectClassUc(classId, ucId).size() - 1 != min) return true;
+        if((int) intersectClassUc(classId, ucId).size() != min) return true;
     }
     return false;
 }
